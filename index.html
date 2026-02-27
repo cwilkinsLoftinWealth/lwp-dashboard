@@ -458,15 +458,21 @@
   <div class="card chart-section">
     <div class="chart-header">
       <div class="chart-title">Portfolio Performance</div>
-      <div class="chart-tabs">
-        <button class="tab active">1W</button>
-        <button class="tab">1M</button>
-        <button class="tab">3M</button>
-        <button class="tab">YTD</button>
-        <button class="tab">1Y</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="chart-tabs" id="perf-tabs">
+          <button class="tab active" data-range="ytd">YTD</button>
+          <button class="tab" data-range="1y">1Y</button>
+          <button class="tab" data-range="2y">2Y</button>
+          <button class="tab" data-range="3y">3Y</button>
+          <button class="tab" data-range="5y">5Y</button>
+        </div>
+        <button class="tab" id="perf-toggle" style="margin-left:6px;font-weight:700">$</button>
       </div>
     </div>
-    <canvas id="perfChart" height="175"></canvas>
+    <div id="perf-placeholder" style="text-align:center;padding:40px 0;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+      Upload holdings file to generate performance chart
+    </div>
+    <canvas id="perfChart" height="175" style="display:none"></canvas>
   </div>
 
   <!-- SIDEBAR -->
@@ -769,37 +775,216 @@ async function fetchFearGreed() {
 fetchFearGreed();
 setInterval(fetchFearGreed, 300000);
 
-// ── PERFORMANCE CHART ──
-const pCtx = document.getElementById('perfChart').getContext('2d');
-const pGrad = pCtx.createLinearGradient(0,0,0,175);
-pGrad.addColorStop(0,'rgba(74,127,165,0.22)'); pGrad.addColorStop(1,'rgba(74,127,165,0)');
-new Chart(pCtx,{
-  type:'line',
-  data:{
-    labels:['Feb 13','Feb 14','Feb 15','Feb 16','Feb 17','Feb 18','Feb 19','Feb 20'],
-    datasets:[
-      {label:'LWP Portfolio',data:[268000,271500,269800,274200,272100,278300,281400,284612],
-       borderColor:'#5b9ec9',borderWidth:2,fill:true,backgroundColor:pGrad,
-       pointRadius:3,pointBackgroundColor:'#5b9ec9',pointBorderColor:'#ffffff',pointBorderWidth:2,tension:.4},
-      {label:'S&P 500 (scaled)',data:[265000,267000,266500,268000,267500,269000,270500,272000],
-       borderColor:'#c9a84c',borderWidth:1.5,fill:false,borderDash:[4,4],pointRadius:0,tension:.4}
-    ]
-  },
-  options:{
-    responsive:true, interaction:{mode:'index',intersect:false},
-    plugins:{
-      legend:{labels:{color:'#486a82',font:{family:'DM Mono',size:10},boxWidth:18}},
-      tooltip:{backgroundColor:'#0d2d45',borderColor:'#4a7fa5',borderWidth:1,
-        titleColor:'#486a82',bodyColor:'#d8e8f2',
-        titleFont:{family:'DM Mono',size:10},bodyFont:{family:'DM Mono',size:11},
-        callbacks:{label:c=>` $${c.raw.toLocaleString()}`}}
+// ── PERFORMANCE CHART (dynamic, built after file upload) ──
+let perfChart = null;
+let perfData = null; // { labels:[], portfolio:[], benchmark:[], range:'ytd' }
+let perfMode = 'dollar'; // 'dollar' or 'pct'
+let perfRange = 'ytd';
+let uploadedRows = null; // store uploaded rows for chart rebuild
+
+function buildPerfChart(labels, portVals, bmVals) {
+  const canvas = document.getElementById('perfChart');
+  const placeholder = document.getElementById('perf-placeholder');
+  placeholder.style.display = 'none';
+  canvas.style.display = 'block';
+
+  if (perfChart) perfChart.destroy();
+
+  const ctx = canvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0,0,0,175);
+  grad.addColorStop(0,'rgba(74,127,165,0.22)'); grad.addColorStop(1,'rgba(74,127,165,0)');
+
+  const isDollar = perfMode === 'dollar';
+  const portDisplay = isDollar ? portVals : portVals.map(v => ((v / portVals[0]) - 1) * 100);
+  const bmDisplay = isDollar ? bmVals : bmVals.map(v => ((v / bmVals[0]) - 1) * 100);
+
+  perfChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'LWP Portfolio',
+          data: portDisplay,
+          borderColor: '#1a5f8a',
+          borderWidth: 2,
+          fill: true,
+          backgroundColor: grad,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          pointBackgroundColor: '#1a5f8a',
+          tension: 0.3
+        },
+        {
+          label: 'MSCI ACWI',
+          data: bmDisplay,
+          borderColor: '#c9a84c',
+          borderWidth: 1.5,
+          fill: false,
+          borderDash: [5, 3],
+          pointRadius: 0,
+          tension: 0.3
+        }
+      ]
     },
-    scales:{
-      x:{grid:{color:'#d0dce8',drawBorder:false},ticks:{color:'#5a7a94',font:{family:'DM Mono',size:10}}},
-      y:{grid:{color:'#d0dce8',drawBorder:false},ticks:{color:'#5a7a94',font:{family:'DM Mono',size:10},callback:v=>'$'+(v/1000).toFixed(0)+'k'}}
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#5a7a94', font: { family: 'DM Mono', size: 10 }, boxWidth: 18 } },
+        tooltip: {
+          backgroundColor: '#0d2d45', borderColor: '#4a7fa5', borderWidth: 1,
+          titleColor: '#5a7a94', bodyColor: '#d8e8f2',
+          titleFont: { family: 'DM Mono', size: 10 }, bodyFont: { family: 'DM Mono', size: 11 },
+          callbacks: {
+            label: c => isDollar
+              ? ` ${c.dataset.label}: $${Math.round(c.raw).toLocaleString()}`
+              : ` ${c.dataset.label}: ${c.raw >= 0 ? '+' : ''}${c.raw.toFixed(2)}%`
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: '#d0dce8', drawBorder: false }, ticks: { color: '#5a7a94', font: { family: 'DM Mono', size: 9 }, maxTicksLimit: 8 } },
+        y: {
+          grid: { color: '#d0dce8', drawBorder: false },
+          ticks: {
+            color: '#5a7a94',
+            font: { family: 'DM Mono', size: 10 },
+            callback: v => isDollar ? '$' + (v / 1000).toFixed(0) + 'k' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%'
+          }
+        }
+      }
     }
+  });
+}
+
+// Fetch historical candles from Finnhub
+async function fhCandles(symbol, from, to, resolution) {
+  const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(symbol)}&resolution=${resolution}&from=${from}&to=${to}&token=${FH_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Finnhub candles HTTP ${r.status}`);
+  const d = await r.json();
+  if (d.s !== 'ok' || !d.c) throw new Error('No candle data for ' + symbol);
+  return { timestamps: d.t, closes: d.c };
+}
+
+// Get date range timestamps
+function getRange(range) {
+  const now = Math.floor(Date.now() / 1000);
+  const d = new Date();
+  let from;
+  switch(range) {
+    case 'ytd': from = Math.floor(new Date(d.getFullYear(), 0, 1).getTime() / 1000); break;
+    case '1y':  from = now - 365 * 86400; break;
+    case '2y':  from = now - 730 * 86400; break;
+    case '3y':  from = now - 1095 * 86400; break;
+    case '5y':  from = now - 1825 * 86400; break;
+    default:    from = now - 365 * 86400;
+  }
+  return { from, to: now };
+}
+
+// Build the chart from uploaded holdings
+async function loadPerfChart(rows, range) {
+  const placeholder = document.getElementById('perf-placeholder');
+  placeholder.style.display = 'block';
+  placeholder.textContent = 'Loading historical data…';
+  document.getElementById('perfChart').style.display = 'none';
+
+  const { from, to } = getRange(range);
+  // Use weekly resolution for 2Y+ to stay within Finnhub limits
+  const resolution = ['2y','3y','5y'].includes(range) ? 'W' : 'D';
+
+  try {
+    // Fetch ACWI benchmark
+    const bmCandles = await fhCandles('ACWI', from, to, resolution);
+
+    // Fetch candles for each unique ticker
+    const tickers = [...new Set(rows.map(r => r.ticker))];
+    const tickerCandles = {};
+    const failedTickers = [];
+
+    for (const ticker of tickers) {
+      try {
+        tickerCandles[ticker] = await fhCandles(ticker, from, to, resolution);
+      } catch(e) {
+        console.warn(`[LWP] No candles for ${ticker}:`, e.message);
+        failedTickers.push(ticker);
+      }
+      // Finnhub rate limit: 30 calls/sec on free tier, add small delay
+      await new Promise(r => setTimeout(r, 120));
+    }
+
+    // Use benchmark timestamps as the common date axis
+    const dates = bmCandles.timestamps;
+    const labels = dates.map(t => {
+      const d = new Date(t * 1000);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
+    });
+
+    // For each date, calculate portfolio value using historical prices
+    // Holdings: use current quantities from upload, multiply by historical close
+    const portValues = dates.map((ts, di) => {
+      let total = 0;
+      for (const row of rows) {
+        const candles = tickerCandles[row.ticker];
+        if (!candles) {
+          // No history — use upload price as constant
+          total += row.qty * row.price;
+          continue;
+        }
+        // Find closest candle date <= ts
+        let closePrice = row.price;
+        for (let j = candles.timestamps.length - 1; j >= 0; j--) {
+          if (candles.timestamps[j] <= ts) {
+            closePrice = candles.closes[j];
+            break;
+          }
+        }
+        total += row.qty * closePrice;
+      }
+      return total;
+    });
+
+    // Scale ACWI to start at same value as portfolio for dollar mode
+    const portStart = portValues[0];
+    const bmStart = bmCandles.closes[0];
+    const bmScaled = bmCandles.closes.map(v => (v / bmStart) * portStart);
+
+    perfData = { labels, portfolio: portValues, benchmark: bmScaled };
+    buildPerfChart(labels, portValues, bmScaled);
+
+    if (failedTickers.length > 0) {
+      console.warn('[LWP] Chart: no history for:', failedTickers.join(', '));
+    }
+  } catch(e) {
+    console.error('[LWP] Chart load failed:', e);
+    placeholder.textContent = 'Could not load historical data. Try again later.';
+    placeholder.style.display = 'block';
+    document.getElementById('perfChart').style.display = 'none';
+  }
+}
+
+// Tab click handlers
+document.querySelectorAll('#perf-tabs .tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#perf-tabs .tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    perfRange = t.dataset.range;
+    if (uploadedRows) loadPerfChart(uploadedRows, perfRange);
+  });
+});
+
+// Toggle dollar/percent
+document.getElementById('perf-toggle').addEventListener('click', () => {
+  perfMode = perfMode === 'dollar' ? 'pct' : 'dollar';
+  document.getElementById('perf-toggle').textContent = perfMode === 'dollar' ? '$' : '%';
+  if (perfData) {
+    buildPerfChart(perfData.labels, perfData.portfolio, perfData.benchmark);
   }
 });
+
+// ── OLD CHART TABS REMOVED ──
 
 // ── FIVE QUADRANT MODEL ──
 // Target ranges per LWP Investment Framework (Mod. Aggressive profile)
@@ -1017,11 +1202,7 @@ news.forEach(n=>{
 
 // ── VIX + F&G: live fetching handled above ──
 
-// ── CHART TABS ──
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-}));
+// ── OLD CHART TABS REMOVED (replaced by perf-tabs handler above) ──
 
 let portBase = 0;
 // No random animation — portfolio value only updates from file upload
@@ -1228,6 +1409,9 @@ function handleFile(file) {
       const positions = parseFile(buf, file.name);
       const rows = positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs }));
       refreshDashboard(rows);
+      // Store rows for chart tab switching and trigger chart load
+      uploadedRows = rows;
+      loadPerfChart(rows, perfRange);
     } catch(err) {
       showStatus('\u2715 ' + err.message, 'error');
       console.error(err);
