@@ -861,11 +861,55 @@ function buildPerfChart(labels, portVals, bmVals) {
 // Fetch historical candles from Finnhub
 async function fhCandles(symbol, from, to, resolution) {
   const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(symbol)}&resolution=${resolution}&from=${from}&to=${to}&token=${FH_KEY}`;
+  console.log(`[LWP] Fetching candles: ${symbol} res=${resolution}`);
   const r = await fetch(url);
-  if (!r.ok) throw new Error(`Finnhub candles HTTP ${r.status}`);
+  if (!r.ok) throw new Error(`Finnhub HTTP ${r.status} for ${symbol}`);
   const d = await r.json();
-  if (d.s !== 'ok' || !d.c) throw new Error('No candle data for ' + symbol);
+  console.log(`[LWP] Candle response for ${symbol}: s=${d.s}, points=${d.c ? d.c.length : 0}`);
+  if (d.s !== 'ok' || !d.c || d.c.length === 0) throw new Error('No candle data for ' + symbol);
   return { timestamps: d.t, closes: d.c };
+}
+
+// Yahoo Finance candle fallback via CORS proxy
+async function yahooCandles(symbol, range) {
+  // range map: ytd→ytd, 1y→1y, 2y→2y, 3y→5y (Yahoo doesn't have 3y), 5y→5y
+  const yRange = { ytd:'ytd', '1y':'1y', '2y':'2y', '3y':'5y', '5y':'5y' }[range] || '1y';
+  const interval = ['2y','3y','5y'].includes(range) ? '1wk' : '1d';
+  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${interval}`;
+  const proxies = [
+    { url: `https://api.allorigins.win/get?url=${encodeURIComponent(yUrl)}`, wrapped: true },
+    { url: `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`, wrapped: false }
+  ];
+  for (const proxy of proxies) {
+    try {
+      console.log(`[LWP] Yahoo fallback for ${symbol} via ${proxy.wrapped ? 'allorigins' : 'corsproxy'}`);
+      const r = await fetch(proxy.url);
+      if (!r.ok) continue;
+      const raw = await r.json();
+      const data = proxy.wrapped ? JSON.parse(raw.contents) : raw;
+      const result = data.chart.result[0];
+      const ts = result.timestamp;
+      const closes = result.indicators.quote[0].close;
+      // Filter out nulls
+      const valid = ts.map((t, i) => ({ t, c: closes[i] })).filter(x => x.c != null);
+      if (valid.length < 2) continue;
+      console.log(`[LWP] Yahoo got ${valid.length} points for ${symbol}`);
+      return { timestamps: valid.map(x => x.t), closes: valid.map(x => x.c) };
+    } catch(e) {
+      console.warn(`[LWP] Yahoo proxy failed for ${symbol}:`, e.message);
+    }
+  }
+  throw new Error('All sources failed for ' + symbol);
+}
+
+// Try Finnhub first, fall back to Yahoo
+async function getCandles(symbol, from, to, resolution, range) {
+  try {
+    return await fhCandles(symbol, from, to, resolution);
+  } catch(e) {
+    console.warn(`[LWP] Finnhub failed for ${symbol}, trying Yahoo:`, e.message);
+    return await yahooCandles(symbol, range);
+  }
 }
 
 // Get date range timestamps
@@ -892,27 +936,36 @@ async function loadPerfChart(rows, range) {
   document.getElementById('perfChart').style.display = 'none';
 
   const { from, to } = getRange(range);
-  // Use weekly resolution for 2Y+ to stay within Finnhub limits
   const resolution = ['2y','3y','5y'].includes(range) ? 'W' : 'D';
 
   try {
-    // Fetch ACWI benchmark
-    const bmCandles = await fhCandles('ACWI', from, to, resolution);
+    // Fetch ACWI benchmark — try Finnhub then Yahoo
+    let bmCandles;
+    try {
+      bmCandles = await getCandles('ACWI', from, to, resolution, range);
+    } catch(e) {
+      console.warn('[LWP] ACWI failed, trying URTH:', e.message);
+      bmCandles = await getCandles('URTH', from, to, resolution, range);
+    }
 
     // Fetch candles for each unique ticker
     const tickers = [...new Set(rows.map(r => r.ticker))];
     const tickerCandles = {};
     const failedTickers = [];
 
-    for (const ticker of tickers) {
+    placeholder.textContent = `Loading historical data… (0/${tickers.length} tickers)`;
+
+    for (let i = 0; i < tickers.length; i++) {
+      const ticker = tickers[i];
+      placeholder.textContent = `Loading historical data… (${i+1}/${tickers.length}: ${ticker})`;
       try {
-        tickerCandles[ticker] = await fhCandles(ticker, from, to, resolution);
+        tickerCandles[ticker] = await getCandles(ticker, from, to, resolution, range);
       } catch(e) {
         console.warn(`[LWP] No candles for ${ticker}:`, e.message);
         failedTickers.push(ticker);
       }
-      // Finnhub rate limit: 30 calls/sec on free tier, add small delay
-      await new Promise(r => setTimeout(r, 120));
+      // Rate limit delay
+      await new Promise(r => setTimeout(r, 150));
     }
 
     // Use benchmark timestamps as the common date axis
@@ -923,17 +976,14 @@ async function loadPerfChart(rows, range) {
     });
 
     // For each date, calculate portfolio value using historical prices
-    // Holdings: use current quantities from upload, multiply by historical close
     const portValues = dates.map((ts, di) => {
       let total = 0;
       for (const row of rows) {
         const candles = tickerCandles[row.ticker];
         if (!candles) {
-          // No history — use upload price as constant
           total += row.qty * row.price;
           continue;
         }
-        // Find closest candle date <= ts
         let closePrice = row.price;
         for (let j = candles.timestamps.length - 1; j >= 0; j--) {
           if (candles.timestamps[j] <= ts) {
@@ -955,11 +1005,11 @@ async function loadPerfChart(rows, range) {
     buildPerfChart(labels, portValues, bmScaled);
 
     if (failedTickers.length > 0) {
-      console.warn('[LWP] Chart: no history for:', failedTickers.join(', '));
+      console.warn('[LWP] Chart: no history for:', failedTickers.join(', '), '(used upload price as constant)');
     }
   } catch(e) {
     console.error('[LWP] Chart load failed:', e);
-    placeholder.textContent = 'Could not load historical data. Try again later.';
+    placeholder.textContent = 'Could not load chart: ' + e.message;
     placeholder.style.display = 'block';
     document.getElementById('perfChart').style.display = 'none';
   }
