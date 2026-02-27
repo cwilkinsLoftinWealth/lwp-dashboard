@@ -280,21 +280,8 @@
   /* ── ESTIMATED INCOME & EXPENSES ── */
   .income-section  { grid-column:1/3; grid-row:5; }
   .expense-section { grid-column:3/4; grid-row:5; }
-  .income-table, .expense-table { width:100%; border-collapse:collapse; margin-top:10px; }
-  .income-table th, .expense-table th {
-    font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px;
-    color:var(--muted); text-transform:uppercase; text-align:right; padding:4px 7px;
-    border-bottom:2px solid var(--border);
-  }
-  .income-table th:first-child, .expense-table th:first-child { text-align:left; }
-  .income-table td, .expense-table td {
-    font-family:'DM Mono',monospace; font-size:12px; padding:7px 7px;
-    border-bottom:1px solid var(--border); text-align:right; color:var(--text);
-  }
-  .income-table td:first-child, .expense-table td:first-child { text-align:left; font-weight:600; }
-  .income-table tr:last-child td, .expense-table tr:last-child td { border-bottom:none; }
   .ie-summary {
-    display:flex; gap:16px; padding:14px 0 8px; border-bottom:1px solid var(--border); margin-bottom:4px;
+    display:flex; gap:16px; padding:14px 0 8px; margin-bottom:4px;
   }
   .ie-summary-item { flex:1; text-align:center; }
   .ie-summary-label {
@@ -305,13 +292,18 @@
     font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; line-height:1;
   }
   .ie-summary-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:4px; }
-  .ie-total-row td { font-weight:800 !important; border-top:2px solid var(--border) !important; }
+  .ie-byquad { display:flex; flex-wrap:wrap; gap:8px; padding:10px 0 4px; border-top:1px solid var(--border); }
+  .ie-byquad-item {
+    flex:1; min-width:80px; padding:8px; border-radius:4px;
+    text-align:center; font-family:'DM Mono',monospace;
+  }
+  .ie-byquad-label { font-size:9px; font-weight:700; letter-spacing:1px; margin-bottom:3px; }
+  .ie-byquad-value { font-size:14px; font-weight:700; }
 
   body.presenting .income-section  { grid-column:1; grid-row:auto; }
   body.presenting .expense-section { grid-column:2; grid-row:auto; }
   body.presenting .ie-summary-value { font-size:36px; }
-  body.presenting .income-table td, body.presenting .expense-table td { font-size:14px; padding:9px 7px; }
-  body.presenting .income-table th, body.presenting .expense-table th { font-size:12px; }
+  body.presenting .ie-byquad-value { font-size:16px; }
   .news-section { grid-column:1/4; grid-row:6; }
   .news-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; }
   .news-item { padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; cursor:pointer; transition:all .2s; box-shadow:0 1px 3px rgba(13,51,73,.06); }
@@ -653,7 +645,7 @@
         <strong>Required columns:</strong><br>
         Ticker &nbsp;·&nbsp; Quadrant &nbsp;·&nbsp; Quantity &nbsp;·&nbsp; Price<br>
         <strong>Optional:</strong> RS Score · Div Yield % · Expense Ratio %<br>
-        <span style="color:var(--green)">✦</span> Div yields &amp; expense ratios auto-fetched from Yahoo Finance if not in file<br>
+        <span style="color:var(--green)">✦</span> Div yields auto-fetched from Yahoo Finance if not in file<br>
         <strong>2nd sheet "Performance":</strong> Client name · YTD · 1Y · 3Y · 5Y
       </div>
       <div class="last-updated" id="last-updated"></div>
@@ -698,24 +690,12 @@
   <div class="card income-section" id="income-section" style="display:none">
     <div class="card-label">Estimated Annual Income <span class="badge b-green" id="income-badge">DIVIDENDS</span></div>
     <div id="income-summary"></div>
-    <table class="income-table" id="income-table">
-      <thead><tr>
-        <th style="text-align:left">Asset</th><th>Quadrant</th><th>Yield</th><th>Value</th><th>Est. Income</th>
-      </tr></thead>
-      <tbody id="income-tbody"></tbody>
-    </table>
-    <div class="disclaimer-inline">Estimated income based on current dividend yields and portfolio values. Yields sourced from Yahoo Finance when not provided in the uploaded file. Actual dividends may vary and are not guaranteed.</div>
+    <div class="disclaimer-inline">Estimated income based on trailing 12-month dividend payments and current portfolio values. Yields sourced from Yahoo Finance when not provided in the uploaded file. Actual dividends may vary and are not guaranteed.</div>
   </div>
   <div class="card expense-section" id="expense-section" style="display:none">
     <div class="card-label">Portfolio Expenses <span class="badge b-gold" id="expense-badge">EXPENSE RATIOS</span></div>
     <div id="expense-summary"></div>
-    <table class="expense-table" id="expense-table">
-      <thead><tr>
-        <th style="text-align:left">Asset</th><th>Quadrant</th><th>Exp. Ratio</th><th>Value</th><th>Annual Cost</th>
-      </tr></thead>
-      <tbody id="expense-tbody"></tbody>
-    </table>
-    <div class="disclaimer-inline">Expense ratios sourced from Yahoo Finance when not provided in the uploaded file. Ratios are as reported by the fund and subject to change. Does not include transaction costs, advisory fees, or other charges.</div>
+    <div class="disclaimer-inline">Expense ratios as reported by the fund, sourced from uploaded file. Ratios are subject to change. Does not include transaction costs, advisory fees, or other charges.</div>
   </div>
   <div class="card news-section">
     <div class="card-label">Market Intelligence <span class="badge b-gold">6 STORIES</span></div>
@@ -1607,12 +1587,11 @@ function clearUpload() {
   location.reload();
 }
 
-// ── Main handler — file only, no network calls
-// ── YAHOO FINANCE: Fetch dividend yield & expense ratio per ticker ──
-// Uses quoteSummary endpoint with summaryDetail (div yield) + fundProfile (expense ratio)
-// Excel values take priority if provided; Yahoo fills in the blanks
-async function fetchYahooFundData(ticker) {
-  const yUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=summaryDetail,fundProfile`;
+// ── YAHOO FINANCE: Fetch trailing dividend yield via chart endpoint ──
+// Uses v8/finance/chart (same endpoint as benchmarks — no auth needed)
+// Sums dividends from past year and divides by current price
+async function fetchDividendYield(ticker) {
+  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(ticker)}?range=1y&interval=3mo&events=div`;
   const proxies = [
     `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`,
     `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl)}`
@@ -1623,84 +1602,61 @@ async function fetchYahooFundData(ticker) {
       if (!r.ok) continue;
       const raw = await r.json();
       const data = raw.contents ? JSON.parse(raw.contents) : raw;
-      const result = data.quoteSummary?.result?.[0];
+      const result = data.chart?.result?.[0];
       if (!result) continue;
 
-      // Dividend yield from summaryDetail (as decimal, e.g., 0.0127 = 1.27%)
-      let divYield = null;
-      const sd = result.summaryDetail;
-      if (sd) {
-        const dy = sd.dividendYield?.raw ?? sd.trailingAnnualDividendYield?.raw ?? null;
-        if (dy != null && dy > 0) divYield = dy * 100; // convert to percentage
-      }
+      const price = result.meta?.previousClose ?? result.meta?.regularMarketPrice;
+      if (!price || price <= 0) continue;
 
-      // Expense ratio from fundProfile (as decimal, e.g., 0.0003 = 0.03%)
-      let expRatio = null;
-      const fp = result.fundProfile;
-      if (fp) {
-        const fees = fp.feesExpensesInvestment;
-        const er = fees?.annualReportExpenseRatio?.raw ?? fees?.netExpenseRatio?.raw ?? fees?.totalExpenseRatio?.raw ?? null;
-        if (er != null && er >= 0) expRatio = er * 100; // convert to percentage
-      }
+      // Sum all dividend payments in the past year
+      const divEvents = result.events?.dividends;
+      if (!divEvents || Object.keys(divEvents).length === 0) return null; // no dividends
 
-      console.log(`[LWP] Yahoo fund data for ${ticker}: divYield=${divYield?.toFixed(2) ?? 'N/A'}%, expRatio=${expRatio?.toFixed(2) ?? 'N/A'}%`);
-      return { divYield, expRatio };
+      const totalDiv = Object.values(divEvents).reduce((s, d) => s + (d.amount || 0), 0);
+      if (totalDiv <= 0) return null;
+
+      const trailingYield = (totalDiv / price) * 100;
+      console.log(`[LWP] ${ticker}: trailing div yield = ${trailingYield.toFixed(2)}% ($${totalDiv.toFixed(2)} / $${price.toFixed(2)})`);
+      return trailingYield;
     } catch(e) {
-      console.warn(`[LWP] Fund data fetch failed for ${ticker}:`, e.message);
+      // Silently continue to next proxy
     }
   }
-  return { divYield: null, expRatio: null };
+  return null;
 }
 
-// Fetch fund data for all holdings, merge with existing data, re-render panels
+// Fetch dividend yields for holdings missing them, then re-render
 async function enrichWithYahooData(rows) {
-  const tickers = [...new Set(rows.map(r => r.ticker))];
-  const needsDiv = rows.some(r => r.divYield == null);
-  const needsER  = rows.some(r => r.expRatio == null);
-  if (!needsDiv && !needsER) {
-    console.log('[LWP] All div yields and expense ratios from Excel — skipping Yahoo fetch');
+  const needsDiv = rows.filter(r => r.divYield == null);
+  if (needsDiv.length === 0) {
+    console.log('[LWP] All dividend yields provided in Excel — skipping Yahoo fetch');
     return;
   }
 
-  console.log(`[LWP] Fetching fund data for ${tickers.length} tickers from Yahoo Finance...`);
+  const tickers = [...new Set(needsDiv.map(r => r.ticker))];
+  console.log(`[LWP] Fetching dividend data for ${tickers.length} tickers from Yahoo Finance...`);
 
-  // Show loading state in panels
+  // Show loading state
   const incomeSection = document.getElementById('income-section');
-  const expenseSection = document.getElementById('expense-section');
-  if (needsDiv) {
-    incomeSection.style.display = '';
-    document.getElementById('income-summary').innerHTML = '<div class="ie-summary"><div class="ie-summary-item"><div class="ie-summary-label">FETCHING DIVIDEND DATA</div><div class="ie-summary-value" style="color:var(--muted);font-size:16px">Loading from Yahoo Finance\u2026</div></div></div>';
-    document.getElementById('income-tbody').innerHTML = '';
-    document.getElementById('income-badge').textContent = 'LOADING';
-  }
-  if (needsER) {
-    expenseSection.style.display = '';
-    document.getElementById('expense-summary').innerHTML = '<div class="ie-summary"><div class="ie-summary-item"><div class="ie-summary-label">FETCHING EXPENSE DATA</div><div class="ie-summary-value" style="color:var(--muted);font-size:16px">Loading from Yahoo Finance\u2026</div></div></div>';
-    document.getElementById('expense-tbody').innerHTML = '';
-    document.getElementById('expense-badge').textContent = 'LOADING';
-  }
+  incomeSection.style.display = '';
+  document.getElementById('income-summary').innerHTML = '<div class="ie-summary"><div class="ie-summary-item"><div class="ie-summary-label">FETCHING DIVIDEND DATA</div><div class="ie-summary-value" style="color:var(--muted);font-size:16px">Loading from Yahoo Finance\u2026</div></div></div>';
+  document.getElementById('income-badge').textContent = 'LOADING';
 
-  let fetched = 0;
+  let enriched = 0;
   for (const ticker of tickers) {
-    const rowsForTicker = rows.filter(r => r.ticker === ticker);
-    const needsDivForTicker = rowsForTicker.some(r => r.divYield == null);
-    const needsERForTicker  = rowsForTicker.some(r => r.expRatio == null);
-    if (!needsDivForTicker && !needsERForTicker) continue;
-
-    const yahooData = await fetchYahooFundData(ticker);
-    rowsForTicker.forEach(r => {
-      if (r.divYield == null && yahooData.divYield != null) r.divYield = yahooData.divYield;
-      if (r.expRatio == null && yahooData.expRatio != null) r.expRatio = yahooData.expRatio;
-    });
-    fetched++;
-    await new Promise(r => setTimeout(r, 250)); // rate limit
+    const dy = await fetchDividendYield(ticker);
+    if (dy != null) {
+      rows.filter(r => r.ticker === ticker).forEach(r => { r.divYield = dy; });
+      enriched++;
+    }
+    await new Promise(r => setTimeout(r, 400)); // rate limit — 400ms between calls
   }
 
-  console.log(`[LWP] Yahoo fund data: enriched ${fetched} tickers`);
+  console.log(`[LWP] Yahoo dividend data: enriched ${enriched} of ${tickers.length} tickers`);
   renderIncomeExpense(rows);
 }
 
-// Separated income/expense rendering so it can be called after async Yahoo fetch
+// Render portfolio-level income and expense summary cards
 function renderIncomeExpense(rows) {
   const totalValue = rows.reduce((s, r) => s + r.value, 0);
   const incomeSection = document.getElementById('income-section');
@@ -1709,42 +1665,46 @@ function renderIncomeExpense(rows) {
   const hasER  = rows.some(r => r.expRatio != null);
 
   if (hasDiv) {
-    const divRows = rows.filter(r => r.divYield != null).sort((a,b) => (b.value * b.divYield/100) - (a.value * a.divYield/100));
+    const divRows = rows.filter(r => r.divYield != null);
     const totalIncome = divRows.reduce((s,r) => s + (r.value * r.divYield / 100), 0);
     const weightedYield = totalValue > 0 ? (totalIncome / totalValue * 100) : 0;
     const monthlyIncome = totalIncome / 12;
+    const quarterlyIncome = totalIncome / 4;
+
+    // By-quadrant income breakdown
+    const quadIncome = {};
+    divRows.forEach(r => {
+      if (!quadIncome[r.quad]) quadIncome[r.quad] = { income: 0, value: 0 };
+      quadIncome[r.quad].income += r.value * r.divYield / 100;
+      quadIncome[r.quad].value += r.value;
+    });
+
+    let quadHtml = '';
+    ['Q1','Q2','Q3','Q4','Q5'].forEach(qk => {
+      if (!quadIncome[qk]) return;
+      const qi = quadIncome[qk];
+      const qc = (qMeta[qk]||qMeta.UNKNOWN).c;
+      const qYield = qi.value > 0 ? (qi.income / qi.value * 100) : 0;
+      quadHtml += `<div class="ie-byquad-item" style="background:${qc}10;border:1px solid ${qc}30">
+        <div class="ie-byquad-label" style="color:${qc}">${qk}</div>
+        <div class="ie-byquad-value" style="color:var(--green)">$${Math.round(qi.income).toLocaleString()}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px">${qYield.toFixed(1)}% yield</div>
+      </div>`;
+    });
 
     document.getElementById('income-summary').innerHTML = `<div class="ie-summary">
       <div class="ie-summary-item">
         <div class="ie-summary-label">Est. Annual Income</div>
         <div class="ie-summary-value" style="color:var(--green)">$${Math.round(totalIncome).toLocaleString()}</div>
-        <div class="ie-summary-sub">\u2248 $${Math.round(monthlyIncome).toLocaleString()} / month</div>
+        <div class="ie-summary-sub">\u2248 $${Math.round(quarterlyIncome).toLocaleString()} / quarter &nbsp;\u00b7&nbsp; $${Math.round(monthlyIncome).toLocaleString()} / month</div>
       </div>
       <div class="ie-summary-item">
         <div class="ie-summary-label">Wtd. Avg Yield</div>
         <div class="ie-summary-value" style="color:var(--green)">${weightedYield.toFixed(2)}%</div>
-        <div class="ie-summary-sub">${divRows.length} of ${rows.length} positions</div>
+        <div class="ie-summary-sub">${divRows.length} of ${rows.length} positions paying dividends</div>
       </div>
-    </div>`;
-
-    const itb = document.getElementById('income-tbody');
-    itb.innerHTML = '';
-    divRows.forEach(r => {
-      const qc = (qMeta[r.quad]||qMeta.UNKNOWN).c;
-      const estInc = r.value * r.divYield / 100;
-      itb.innerHTML += `<tr>
-        <td class="t-sym">${r.ticker}</td>
-        <td><span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px">${r.quad}</span></td>
-        <td>${r.divYield.toFixed(2)}%</td>
-        <td>$${Math.round(r.value).toLocaleString()}</td>
-        <td style="color:var(--green);font-weight:700">$${Math.round(estInc).toLocaleString()}</td>
-      </tr>`;
-    });
-    itb.innerHTML += `<tr class="ie-total-row">
-      <td colspan="3">Total Estimated Income</td>
-      <td>$${Math.round(totalValue).toLocaleString()}</td>
-      <td style="color:var(--green)">$${Math.round(totalIncome).toLocaleString()}</td>
-    </tr>`;
+    </div>
+    <div class="ie-byquad">${quadHtml}</div>`;
     incomeSection.style.display = '';
     document.getElementById('income-badge').textContent = `${divRows.length} POSITIONS`;
   } else {
@@ -1752,41 +1712,46 @@ function renderIncomeExpense(rows) {
   }
 
   if (hasER) {
-    const erRows = rows.filter(r => r.expRatio != null).sort((a,b) => b.expRatio - a.expRatio);
+    const erRows = rows.filter(r => r.expRatio != null);
     const totalCost = erRows.reduce((s,r) => s + (r.value * r.expRatio / 100), 0);
     const weightedER = totalValue > 0 ? (totalCost / totalValue * 100) : 0;
+    const lowestER = Math.min(...erRows.map(r => r.expRatio));
+    const highestER = Math.max(...erRows.map(r => r.expRatio));
+
+    // By-quadrant expense breakdown
+    const quadExp = {};
+    erRows.forEach(r => {
+      if (!quadExp[r.quad]) quadExp[r.quad] = { cost: 0, value: 0 };
+      quadExp[r.quad].cost += r.value * r.expRatio / 100;
+      quadExp[r.quad].value += r.value;
+    });
+
+    let quadHtml = '';
+    ['Q1','Q2','Q3','Q4','Q5'].forEach(qk => {
+      if (!quadExp[qk]) return;
+      const qe = quadExp[qk];
+      const qc = (qMeta[qk]||qMeta.UNKNOWN).c;
+      const qER = qe.value > 0 ? (qe.cost / qe.value * 100) : 0;
+      quadHtml += `<div class="ie-byquad-item" style="background:${qc}10;border:1px solid ${qc}30">
+        <div class="ie-byquad-label" style="color:${qc}">${qk}</div>
+        <div class="ie-byquad-value" style="color:var(--gold)">$${Math.round(qe.cost).toLocaleString()}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px">${qER.toFixed(2)}% avg</div>
+      </div>`;
+    });
 
     document.getElementById('expense-summary').innerHTML = `<div class="ie-summary">
       <div class="ie-summary-item">
-        <div class="ie-summary-label">Annual Cost</div>
+        <div class="ie-summary-label">Total Annual Cost</div>
         <div class="ie-summary-value" style="color:var(--gold)">$${Math.round(totalCost).toLocaleString()}</div>
-        <div class="ie-summary-sub">on $${Math.round(totalValue).toLocaleString()}</div>
+        <div class="ie-summary-sub">on $${Math.round(totalValue).toLocaleString()} portfolio</div>
       </div>
       <div class="ie-summary-item">
         <div class="ie-summary-label">Wtd. Avg Expense</div>
         <div class="ie-summary-value" style="color:var(--gold)">${weightedER.toFixed(2)}%</div>
-        <div class="ie-summary-sub">${erRows.length} of ${rows.length} positions</div>
+        <div class="ie-summary-sub">range: ${lowestER.toFixed(2)}% \u2013 ${highestER.toFixed(2)}%</div>
       </div>
-    </div>`;
-
-    const etb = document.getElementById('expense-tbody');
-    etb.innerHTML = '';
-    erRows.forEach(r => {
-      const qc = (qMeta[r.quad]||qMeta.UNKNOWN).c;
-      const cost = r.value * r.expRatio / 100;
-      etb.innerHTML += `<tr>
-        <td class="t-sym">${r.ticker}</td>
-        <td><span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px">${r.quad}</span></td>
-        <td>${r.expRatio.toFixed(2)}%</td>
-        <td>$${Math.round(r.value).toLocaleString()}</td>
-        <td style="color:var(--gold);font-weight:700">$${Math.round(cost).toLocaleString()}</td>
-      </tr>`;
-    });
-    etb.innerHTML += `<tr class="ie-total-row">
-      <td colspan="3">Total Annual Cost</td>
-      <td>$${Math.round(totalValue).toLocaleString()}</td>
-      <td style="color:var(--gold)">$${Math.round(totalCost).toLocaleString()}</td>
-    </tr>`;
+    </div>
+    <div class="ie-byquad">${quadHtml}</div>`;
     expenseSection.style.display = '';
     document.getElementById('expense-badge').textContent = `${erRows.length} POSITIONS`;
   } else {
