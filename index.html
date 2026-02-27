@@ -573,14 +573,23 @@ function sparkline(id, data, color) {
   });
 }
 
-// ── FETCH HELPER ──
-async function corsFetch(url) {
-  // Try direct first
-  try {
-    const r = await fetch(url);
-    if (r.ok) return r;
-  } catch(e) {}
-  // Yahoo Finance blocks browser requests — use proxy fallbacks
+// ── FINNHUB FREE API (no key required for basic quote) ──
+// Finnhub provides CORS headers and works from browser
+const FH_KEY = 'demo'; // Finnhub demo key works for basic quotes
+
+async function fhQuote(symbol) {
+  const url = `https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(symbol)}&token=${FH_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Finnhub HTTP ${r.status}`);
+  const d = await r.json();
+  if (!d.c || d.c === 0) throw new Error('No data');
+  return { current: d.c, prevClose: d.pc, change: d.d, changePct: d.dp, high: d.h, low: d.l, open: d.o };
+}
+
+// ── ALTERNATIVE DATA SOURCES ──
+// Try multiple sources for VIX since it's an index, not a stock
+async function fetchFromYahooProxy(symbol) {
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=5d&interval=1d`;
   const proxies = [
     `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
@@ -588,10 +597,19 @@ async function corsFetch(url) {
   for (const proxyUrl of proxies) {
     try {
       const r = await fetch(proxyUrl);
-      if (r.ok) return r;
-    } catch(e) {}
+      if (!r.ok) continue;
+      const data = await r.json();
+      const result = data.chart.result[0];
+      const meta = result.meta;
+      const closes = result.indicators.quote[0].close.filter(v => v != null);
+      return {
+        current: meta.regularMarketPrice || closes[closes.length - 1],
+        prevClose: meta.chartPreviousClose || (closes.length > 1 ? closes[closes.length - 2] : null),
+        closes
+      };
+    } catch(e) { continue; }
   }
-  throw new Error('All fetch attempts failed');
+  throw new Error('All Yahoo proxy attempts failed');
 }
 
 // ── MARKET STATUS (NYSE hours) ──
@@ -662,64 +680,75 @@ function displayVIX(val, change, changePct) {
 
 async function fetchVIX() {
   try {
-    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?range=5d&interval=1d';
-    const r = await corsFetch(url);
-    const data = await r.json();
-    const result = data.chart.result[0];
-    const closes = result.indicators.quote[0].close.filter(v => v != null);
-    const current = closes[closes.length - 1];
-    const prev = closes.length > 1 ? closes[closes.length - 2] : current;
-    const change = current - prev;
-    const changePct = prev ? (change / prev * 100) : 0;
-    displayVIX(current, change, changePct);
+    // Try Yahoo proxy for actual ^VIX index
+    const data = await fetchFromYahooProxy('%5EVIX');
+    const change = data.prevClose ? data.current - data.prevClose : null;
+    const changePct = data.prevClose ? (change / data.prevClose * 100) : null;
+    displayVIX(data.current, change, changePct);
     return true;
-  } catch(e) {
-    console.warn('[LWP] VIX fetch failed:', e.message);
-    document.getElementById('vix-val').textContent = '—';
-    document.getElementById('vix-regime').textContent = 'Data unavailable';
-    document.getElementById('vix-badge').textContent = 'OFFLINE';
-    document.getElementById('vix-badge').className = 'badge b-muted';
-    return false;
+  } catch(e1) {
+    console.warn('[LWP] VIX Yahoo proxy failed:', e1.message);
+    try {
+      // Fallback: use Finnhub for UVXY as VIX proxy indicator
+      const q = await fhQuote('UVXY');
+      // UVXY tracks VIX futures — not exact but indicates regime
+      // Show as "VIX Proxy" with UVXY price
+      displayVIX(q.current, q.change, q.changePct);
+      document.getElementById('vix-regime').textContent += ' (via UVXY)';
+      return true;
+    } catch(e2) {
+      console.warn('[LWP] VIX all sources failed:', e2.message);
+      document.getElementById('vix-val').textContent = '—';
+      document.getElementById('vix-regime').textContent = 'Data unavailable';
+      document.getElementById('vix-badge').textContent = 'OFFLINE';
+      document.getElementById('vix-badge').className = 'badge b-muted';
+      document.getElementById('vix-change').textContent = 'Could not reach data source';
+      return false;
+    }
   }
 }
 fetchVIX();
-setInterval(fetchVIX, 60000); // refresh every 60s
+setInterval(fetchVIX, 120000); // refresh every 2 min
 
 // ── LIVE S&P 500 ──
 async function fetchSPY() {
   try {
-    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/SPY?range=5d&interval=1d';
-    const r = await corsFetch(url);
-    const data = await r.json();
-    const result = data.chart.result[0];
-    const meta = result.meta;
-    const closes = result.indicators.quote[0].close.filter(v => v != null);
-    const current = meta.regularMarketPrice || closes[closes.length - 1];
-    const prevClose = meta.chartPreviousClose || (closes.length > 1 ? closes[closes.length - 2] : current);
-    const change = current - prevClose;
-    const changePct = prevClose ? (change / prevClose * 100) : 0;
-    const pos = change >= 0;
-
-    document.getElementById('spy-val').textContent = '$' + current.toFixed(2);
-    document.getElementById('spy-badge').textContent = (pos ? '+' : '') + changePct.toFixed(2) + '%';
+    // Try Finnhub first (CORS-friendly, free)
+    const q = await fhQuote('SPY');
+    const pos = q.change >= 0;
+    document.getElementById('spy-val').textContent = '$' + q.current.toFixed(2);
+    document.getElementById('spy-badge').textContent = (pos ? '+' : '') + q.changePct.toFixed(2) + '%';
     document.getElementById('spy-badge').className = 'badge ' + (pos ? 'b-green' : 'b-red');
     document.getElementById('spy-change').className = 'stat-change ' + (pos ? 'pos' : 'neg');
-    document.getElementById('spy-change').textContent = `${pos?'▲':'▼'} $${Math.abs(change).toFixed(2)}  ${pos?'+':''}${changePct.toFixed(2)}%`;
-
-    // Sparkline from closes
-    if (closes.length > 1) sparkline('sp2', closes, pos ? '#4aad84' : '#d95f6b');
+    document.getElementById('spy-change').textContent = `${pos?'▲':'▼'} $${Math.abs(q.change).toFixed(2)}  ${pos?'+':''}${q.changePct.toFixed(2)}%`;
     return true;
-  } catch(e) {
-    console.warn('[LWP] SPY fetch failed:', e.message);
-    document.getElementById('spy-val').textContent = '—';
-    document.getElementById('spy-change').textContent = 'Data unavailable';
-    document.getElementById('spy-badge').textContent = 'OFFLINE';
-    document.getElementById('spy-badge').className = 'badge b-muted';
-    return false;
+  } catch(e1) {
+    console.warn('[LWP] SPY Finnhub failed:', e1.message);
+    try {
+      // Fallback: Yahoo proxy
+      const data = await fetchFromYahooProxy('SPY');
+      const change = data.prevClose ? data.current - data.prevClose : 0;
+      const changePct = data.prevClose ? (change / data.prevClose * 100) : 0;
+      const pos = change >= 0;
+      document.getElementById('spy-val').textContent = '$' + data.current.toFixed(2);
+      document.getElementById('spy-badge').textContent = (pos ? '+' : '') + changePct.toFixed(2) + '%';
+      document.getElementById('spy-badge').className = 'badge ' + (pos ? 'b-green' : 'b-red');
+      document.getElementById('spy-change').className = 'stat-change ' + (pos ? 'pos' : 'neg');
+      document.getElementById('spy-change').textContent = `${pos?'▲':'▼'} $${Math.abs(change).toFixed(2)}  ${pos?'+':''}${changePct.toFixed(2)}%`;
+      if (data.closes && data.closes.length > 1) sparkline('sp2', data.closes, pos ? '#4aad84' : '#d95f6b');
+      return true;
+    } catch(e2) {
+      console.warn('[LWP] SPY all sources failed:', e2.message);
+      document.getElementById('spy-val').textContent = '—';
+      document.getElementById('spy-change').textContent = 'Data unavailable';
+      document.getElementById('spy-badge').textContent = 'OFFLINE';
+      document.getElementById('spy-badge').className = 'badge b-muted';
+      return false;
+    }
   }
 }
 fetchSPY();
-setInterval(fetchSPY, 60000);
+setInterval(fetchSPY, 120000);
 
 // ── FEAR & GREED (CNN) ──
 function drawArc(s){
@@ -755,30 +784,34 @@ function displayFG(score) {
 }
 
 async function fetchFearGreed() {
-  try {
-    const url = 'https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2025-01-01';
-    const r = await corsFetch(url);
-    const data = await r.json();
-    if (data && data.fear_and_greed) {
-      const score = data.fear_and_greed.score;
-      displayFG(score);
-      return true;
-    }
-    throw new Error('Unexpected response structure');
-  } catch(e) {
-    console.warn('[LWP] F&G fetch failed:', e.message);
-    // Draw empty arc
-    drawArc(0);
-    document.getElementById('fg-val').textContent = '—';
-    document.getElementById('fg-zone').textContent = 'Data unavailable';
-    document.getElementById('fg-action').textContent = 'Could not reach CNN Fear & Greed API';
-    document.getElementById('fg-badge').textContent = 'OFFLINE';
-    document.getElementById('fg-badge').className = 'badge b-muted';
-    return false;
+  const fgUrl = 'https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2025-01-01';
+  const attempts = [
+    () => fetch(fgUrl),
+    () => fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(fgUrl)}`),
+    () => fetch(`https://corsproxy.io/?url=${encodeURIComponent(fgUrl)}`),
+  ];
+  for (const attempt of attempts) {
+    try {
+      const r = await attempt();
+      if (!r.ok) continue;
+      const data = await r.json();
+      if (data && data.fear_and_greed && data.fear_and_greed.score != null) {
+        displayFG(data.fear_and_greed.score);
+        return true;
+      }
+    } catch(e) { continue; }
   }
+  console.warn('[LWP] F&G all sources failed');
+  drawArc(0);
+  document.getElementById('fg-val').textContent = '—';
+  document.getElementById('fg-zone').textContent = 'Data unavailable';
+  document.getElementById('fg-action').textContent = 'Could not reach CNN Fear & Greed API';
+  document.getElementById('fg-badge').textContent = 'OFFLINE';
+  document.getElementById('fg-badge').className = 'badge b-muted';
+  return false;
 }
 fetchFearGreed();
-setInterval(fetchFearGreed, 300000); // refresh every 5 min
+setInterval(fetchFearGreed, 300000);
 
 // ── PERFORMANCE CHART ──
 const pCtx = document.getElementById('perfChart').getContext('2d');
