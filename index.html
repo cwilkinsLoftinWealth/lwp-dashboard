@@ -13,17 +13,17 @@
     --surface:   #ffffff;
     --surface2:  #f4f7fa;
     --surface3:  #e8eef5;
-    --border:    #d0dce8;
+    --border:    #c0d0e0;
     --navy:      #0d3349;
     --steel:     #4a7fa5;
     --blue:      #1a5f8a;
     --lightblue: #4a7fa5;
-    --gold:      #8a6a00;
-    --red:       #b92d3a;
-    --green:     #1a7a4a;
-    --text:      #0d2d45;
-    --muted:     #5a7a94;
-    --dim:       #d0dce8;
+    --gold:      #7a5a00;
+    --red:       #a82030;
+    --green:     #147040;
+    --text:      #0a2538;
+    --muted:     #4a6a82;
+    --dim:       #c8d4e0;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -47,8 +47,8 @@
 
   /* ── TICKER ── */
   .scroll-ticker {
-    font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
-    border-bottom:1px solid var(--border); padding:7px 0;
+    font-family:'DM Mono',monospace; font-size:13px; color:var(--muted);
+    border-bottom:1px solid var(--border); padding:9px 0;
     overflow:hidden; white-space:nowrap;
     background:rgba(238,242,246,0.95);
   }
@@ -61,7 +61,7 @@
   /* ── HEADER ── */
   header {
     display:flex; align-items:center; justify-content:space-between;
-    padding:14px 32px;
+    padding:16px 32px;
     border-bottom:1px solid var(--border);
     background:rgba(255,255,255,0.97);
     backdrop-filter:blur(20px);
@@ -69,36 +69,34 @@
   }
 
   .logo { display:flex; align-items:center; gap:14px; }
-
-  /* SVG icon mimicking LWP logo mark */
-  .logo-icon svg { width:38px; height:38px; }
+  .logo-icon svg { width:44px; height:44px; }
 
   .logo-text { display:flex; flex-direction:column; }
   .logo-name {
     font-family:'Cormorant Garamond',serif;
-    font-size:20px; font-weight:600; letter-spacing:3px;
+    font-size:24px; font-weight:600; letter-spacing:3px;
     color:var(--text); line-height:1;
   }
   .logo-name em { font-style:normal; color:var(--blue); }
   .logo-tagline {
-    font-family:'DM Mono',monospace; font-size:7px;
+    font-family:'DM Mono',monospace; font-size:10px;
     letter-spacing:3px; color:var(--muted);
-    margin-top:3px; text-transform:uppercase;
+    margin-top:4px; text-transform:uppercase;
   }
 
   .header-meta {
     display:flex; align-items:center; gap:22px;
-    font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+    font-family:'DM Mono',monospace; font-size:13px; color:var(--muted);
   }
   .live-dot {
-    width:7px; height:7px; background:var(--green); border-radius:50%;
+    width:9px; height:9px; background:var(--green); border-radius:50%;
     animation:pulse 2s infinite; display:inline-block; margin-right:5px;
   }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
 
   .nav-links { display:flex; gap:5px; }
   .nav-btn {
-    padding:5px 14px; font-family:'Raleway',sans-serif; font-size:11px;
+    padding:7px 16px; font-family:'Raleway',sans-serif; font-size:13px;
     font-weight:600; letter-spacing:1px; border:1px solid var(--border);
     background:transparent; color:var(--muted); cursor:pointer;
     border-radius:3px; transition:all .2s;
@@ -113,16 +111,16 @@
     position:relative; z-index:1;
     padding:22px 32px;
     display:grid;
-    grid-template-columns:1fr 1fr 1fr 310px;
+    grid-template-columns:1fr 1fr 1fr 340px;
     grid-template-rows:auto auto auto auto;
-    gap:14px;
+    gap:16px;
   }
 
   /* ── CARD ── */
   .card {
     background:var(--surface);
     border:1px solid var(--border);
-    border-radius:6px; padding:18px;
+    border-radius:8px; padding:20px;
     position:relative; overflow:hidden;
     animation:fadeUp .5s ease both;
   }
@@ -138,12 +136,12 @@
   .card:nth-child(5){animation-delay:.25s} .card:nth-child(6){animation-delay:.3s}
 
   .card-label {
-    font-size:9px; font-weight:700; letter-spacing:2.5px;
+    font-size:12px; font-weight:700; letter-spacing:2px;
     color:var(--muted); text-transform:uppercase;
-    margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:12px; display:flex; align-items:center; justify-content:space-between;
   }
   .badge {
-    font-size:8px; padding:2px 8px; border-radius:20px;
+    font-size:11px; padding:3px 10px; border-radius:20px;
     font-weight:700; letter-spacing:1px;
   }
   .b-green  { background:#d4f0e4; color:var(--green);    border:1px solid #a8ddc4; }
@@ -155,14 +153,14 @@
   /* ── STAT CARDS ROW ── */
   .stat-cards {
     grid-column:1/4;
-    display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+    display:grid; grid-template-columns:repeat(5,1fr); gap:16px;
   }
   .stat-value {
     font-family:'Cormorant Garamond',serif;
-    font-size:34px; line-height:1; color:var(--text); margin-bottom:5px;
+    font-size:40px; line-height:1; color:var(--text); margin-bottom:6px;
   }
   .stat-change {
-    font-family:'DM Mono',monospace; font-size:11px;
+    font-family:'DM Mono',monospace; font-size:14px;
     display:flex; align-items:center; gap:4px;
   }
   .pos { color:var(--green); }
@@ -172,106 +170,106 @@
   /* ── VIX ── */
   .vix-meter { margin-top:12px; position:relative; }
   .vix-track {
-    height:5px; border-radius:3px; position:relative; margin-bottom:5px;
+    height:7px; border-radius:3px; position:relative; margin-bottom:6px;
     background:linear-gradient(90deg, #4aad84 0%, #c9a84c 42%, #d97040 68%, #d95f6b 100%);
   }
   .vix-needle {
-    position:absolute; top:-5px; width:3px; height:15px;
+    position:absolute; top:-5px; width:4px; height:17px;
     background:#fff; border-radius:2px; transform:translateX(-50%);
-    box-shadow:0 0 5px rgba(255,255,255,.35);
+    box-shadow:0 0 5px rgba(0,0,0,.25);
     transition:left 1s cubic-bezier(.4,0,.2,1);
   }
   .vix-labels {
     display:flex; justify-content:space-between;
-    font-family:'DM Mono',monospace; font-size:7.5px; color:var(--muted);
+    font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
   }
-  .vix-regime { margin-top:7px; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
+  .vix-regime { margin-top:8px; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; }
 
   /* ── F&G ARC ── */
   .fg-arc-wrap {
-    position:relative; width:110px; height:60px; margin:10px auto 0;
+    position:relative; width:130px; height:70px; margin:10px auto 0;
   }
   .fg-arc-wrap canvas { position:absolute; top:0; left:0; }
   .fg-val {
     position:absolute; bottom:0; left:0; right:0;
     text-align:center; font-family:'Cormorant Garamond',serif;
-    font-size:26px; line-height:1; pointer-events:none;
+    font-size:32px; line-height:1; pointer-events:none;
   }
-  .fg-zone { text-align:center; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-top:7px; }
+  .fg-zone { text-align:center; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-top:8px; }
   .fg-action {
-    margin-top:6px; font-family:'DM Mono',monospace; font-size:8.5px;
-    color:var(--muted); text-align:center; line-height:1.5;
-    border-top:1px solid var(--border); padding-top:6px;
+    margin-top:8px; font-family:'DM Mono',monospace; font-size:11px;
+    color:var(--muted); text-align:center; line-height:1.6;
+    border-top:1px solid var(--border); padding-top:8px;
   }
 
   /* ── PERF & BENCHMARK PANEL ── */
   .perf-section { grid-column:1/4; grid-row:2; }
-  .perf-table { width:100%; border-collapse:collapse; margin-top:6px; }
-  .perf-table th { font-family:'DM Mono',monospace; font-size:8.5px; font-weight:700; letter-spacing:1.5px;
-    color:var(--muted); text-transform:uppercase; text-align:right; padding:6px 10px; border-bottom:1px solid var(--border); }
+  .perf-table { width:100%; border-collapse:collapse; margin-top:8px; }
+  .perf-table th { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; letter-spacing:1.5px;
+    color:var(--muted); text-transform:uppercase; text-align:right; padding:8px 12px; border-bottom:2px solid var(--border); }
   .perf-table th:first-child { text-align:left; }
-  .perf-table td { font-family:'DM Mono',monospace; font-size:11px; padding:8px 10px;
+  .perf-table td { font-family:'DM Mono',monospace; font-size:15px; padding:10px 12px;
     border-bottom:1px solid var(--border); text-align:right; vertical-align:middle; }
-  .perf-table td:first-child { text-align:left; font-size:11px; font-weight:700; color:var(--text); }
+  .perf-table td:first-child { text-align:left; font-size:14px; font-weight:700; color:var(--text); }
   .perf-table tr:last-child td { border-bottom:none; }
   .perf-table tr.portfolio-row td { color:var(--blue); font-weight:700; }
-  .perf-table .perf-loading { color:var(--muted); font-size:10px; }
-  .perf-note { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); margin-top:8px;
-    padding-top:7px; border-top:1px solid var(--border); letter-spacing:.3px; }
+  .perf-table .perf-loading { color:var(--muted); font-size:13px; }
+  .perf-note { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:10px;
+    padding-top:8px; border-top:1px solid var(--border); letter-spacing:.3px; }
   canvas { width:100% !important; }
 
   /* ── SIDEBAR ── */
-  .sidebar { grid-column:4; grid-row:1/5; display:flex; flex-direction:column; gap:14px; }
+  .sidebar { grid-column:4; grid-row:1/5; display:flex; flex-direction:column; gap:16px; }
 
   /* ── 5-QUADRANT ── */
   .q-row {
-    display:flex; align-items:flex-start; gap:8px; padding:9px 0;
+    display:flex; align-items:flex-start; gap:10px; padding:11px 0;
     border-bottom:1px solid var(--border);
   }
   .q-row:last-child { border-bottom:none; }
   .q-badge {
-    width:26px; height:26px; border-radius:3px; flex-shrink:0; margin-top:1px;
+    width:32px; height:32px; border-radius:4px; flex-shrink:0; margin-top:1px;
     display:flex; align-items:center; justify-content:center;
-    font-size:9px; font-weight:800;
+    font-size:12px; font-weight:800;
   }
-  .q-name { font-size:11px; font-weight:700; }
-  .q-role { font-family:'DM Mono',monospace; font-size:8.5px; color:var(--muted); margin-top:1px; }
-  .d-ok    { color:#1a7a4a; }
-  .d-warn  { color:#8a6000; }
-  .d-alert { color:#c0392b; }
+  .q-name { font-size:14px; font-weight:700; }
+  .q-role { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:2px; }
+  .d-ok    { color:#147040; }
+  .d-warn  { color:#7a5a00; }
+  .d-alert { color:#a82030; }
 
   /* ── WATCHLIST ── */
   .watch-item {
     display:flex; align-items:center; justify-content:space-between;
-    padding:9px 0; border-bottom:1px solid var(--border);
+    padding:11px 0; border-bottom:1px solid var(--border);
     cursor:pointer; transition:all .15s;
   }
   .watch-item:hover { padding-left:4px; }
   .watch-item:last-child { border-bottom:none; }
-  .w-sym  { font-size:12px; font-weight:700; }
-  .w-name { font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
-  .w-price{ font-family:'DM Mono',monospace; font-size:12px; font-weight:500; }
-  .w-chg  { font-family:'DM Mono',monospace; font-size:10px; }
+  .w-sym  { font-size:15px; font-weight:700; }
+  .w-name { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
+  .w-price{ font-family:'DM Mono',monospace; font-size:15px; font-weight:500; }
+  .w-chg  { font-family:'DM Mono',monospace; font-size:13px; }
 
   /* ── HOLDINGS TABLE ── */
   .holdings-section { grid-column:1/4; grid-row:3; }
   table { width:100%; border-collapse:collapse; }
   thead th {
-    font-size:8.5px; font-weight:700; letter-spacing:1.5px; color:var(--muted);
-    text-transform:uppercase; padding:0 7px 10px 7px;
-    text-align:right; border-bottom:1px solid var(--border);
+    font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--muted);
+    text-transform:uppercase; padding:4px 10px 12px 10px;
+    text-align:right; border-bottom:2px solid var(--border);
   }
   thead th:first-child { text-align:left; }
   tbody tr { border-bottom:1px solid var(--border); transition:background .15s; cursor:pointer; }
   tbody tr:hover { background:rgba(26,95,138,.05); }
   tbody tr:last-child { border-bottom:none; }
-  td { padding:9px 7px; font-family:'DM Mono',monospace; font-size:11px; text-align:right; color:var(--text); }
+  td { padding:11px 10px; font-family:'DM Mono',monospace; font-size:14px; text-align:right; color:var(--text); }
   td:first-child { text-align:left; }
-  .t-sym  { font-weight:600; font-size:12px; color:var(--text); }
-  .t-name { font-family:'Raleway',sans-serif; font-size:9px; color:var(--muted); font-weight:400; }
+  .t-sym  { font-weight:700; font-size:15px; color:var(--text); }
+  .t-name { font-family:'Raleway',sans-serif; font-size:12px; color:var(--muted); font-weight:400; }
 
   /* RS badges */
-  .rs { display:inline-flex; align-items:center; padding:2px 7px; border-radius:3px; font-family:'DM Mono',monospace; font-size:9px; font-weight:800; letter-spacing:.4px; }
+  .rs { display:inline-flex; align-items:center; padding:4px 10px; border-radius:4px; font-family:'DM Mono',monospace; font-size:13px; font-weight:800; letter-spacing:.4px; }
   .rs-buy  { background:#d4f0e4; color:#0f5c35; border:1px solid #a8ddc4; }
   .rs-add  { background:#e4f5ec; color:#1a7a4a; border:1px solid #b8e0cb; }
   .rs-hold { background:#fef6d8; color:#7a5500; border:1px solid #e8d080; }
@@ -280,21 +278,22 @@
 
   /* ── NEWS ── */
   .news-section { grid-column:1/4; grid-row:4; }
-  .news-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:11px; margin-top:4px; }
-  .news-item { padding:11px; background:var(--surface); border:1px solid var(--border); border-radius:5px; cursor:pointer; transition:all .2s; box-shadow:0 1px 3px rgba(13,51,73,.06); }
+  .news-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; }
+  .news-item { padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; cursor:pointer; transition:all .2s; box-shadow:0 1px 3px rgba(13,51,73,.06); }
   .news-item:hover { border-color:var(--steel); background:var(--surface2); }
-  .news-src { font-size:8.5px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-bottom:5px; }
-  .news-hl  { font-size:11px; font-weight:600; line-height:1.5; color:var(--text); margin-bottom:5px; }
-  .news-time{ font-family:'DM Mono',monospace; font-size:9px; color:var(--muted); }
-  .news-tag { display:inline-block; font-size:8.5px; padding:2px 5px; border-radius:2px; font-weight:700; letter-spacing:1px; margin-right:4px; }
-  .tag-bull { background:rgba(74,173,132,.1);  color:var(--green); }
-  .tag-bear { background:rgba(217,95,107,.1);  color:var(--red); }
+  .news-src { font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-bottom:6px; }
+  .news-hl  { font-size:14px; font-weight:600; line-height:1.5; color:var(--text); margin-bottom:6px; }
+  .news-time{ font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
+  .news-tag { display:inline-block; font-size:11px; padding:3px 7px; border-radius:3px; font-weight:700; letter-spacing:1px; margin-right:4px; }
+  .tag-bull { background:rgba(74,173,132,.12);  color:var(--green); }
+  .tag-bear { background:rgba(217,95,107,.12);  color:var(--red); }
   .tag-neut { background:rgba(72,106,130,.12); color:var(--muted); }
+
   /* ── CSV UPLOAD ── */
   .upload-zone {
     border: 2px dashed var(--border);
     border-radius: 6px;
-    padding: 16px 12px 12px;
+    padding: 18px 14px 14px;
     text-align: center;
     cursor: default;
     transition: all 0.2s;
@@ -307,12 +306,12 @@
   }
   .upload-browse-btn {
     display: inline-block;
-    margin-top: 8px;
-    padding: 4px 14px;
+    margin-top: 10px;
+    padding: 6px 18px;
     border: 1px solid var(--border);
-    border-radius: 3px;
+    border-radius: 4px;
     font-family: 'DM Mono', monospace;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 1px;
     color: var(--blue);
@@ -324,32 +323,115 @@
     border-color: var(--blue);
     background: rgba(91,158,201,0.1);
   }
-  .upload-icon { font-size: 20px; margin-bottom: 6px; }
+  .upload-icon { font-size: 28px; margin-bottom: 8px; }
   .upload-title {
-    font-size: 11px; font-weight: 700; letter-spacing: 1px;
-    color: var(--text); margin-bottom: 3px;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    color: var(--text); margin-bottom: 4px;
   }
   .upload-sub {
-    font-family: 'DM Mono', monospace; font-size: 9px; color: var(--muted); line-height: 1.5;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); line-height: 1.6;
   }
   .upload-status {
-    margin-top: 10px; padding: 8px 10px;
+    margin-top: 10px; padding: 10px 12px;
     border-radius: 4px; font-family: 'DM Mono', monospace;
-    font-size: 9px; line-height: 1.5; display: none;
+    font-size: 12px; line-height: 1.6; display: none;
   }
   .upload-status.success { background: rgba(74,173,132,0.1); border: 1px solid rgba(74,173,132,0.2); color: var(--green); }
   .upload-status.error   { background: rgba(217,95,107,0.1); border: 1px solid rgba(217,95,107,0.2); color: var(--red); }
   .csv-format-hint {
-    margin-top: 10px; padding: 8px 10px;
+    margin-top: 12px; padding: 10px 12px;
     border-radius: 4px; background: #eaeff4;
-    font-family: 'DM Mono', monospace; font-size: 8.5px; color: var(--muted); line-height: 1.8;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); line-height: 1.9;
   }
   .csv-format-hint strong { color: var(--blue); }
   .last-updated {
-    font-family: 'DM Mono', monospace; font-size: 8px;
-    color: var(--muted); text-align: right; margin-top: 6px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); text-align: right; margin-top: 8px;
     display: none;
   }
+  /* ── PRESENTATION MODE ── */
+  .present-toggle {
+    padding:7px 18px; font-family:'DM Mono',monospace; font-size:12px;
+    font-weight:700; letter-spacing:1px; border:2px solid var(--blue);
+    background:rgba(26,95,138,0.08); color:var(--blue); cursor:pointer;
+    border-radius:4px; transition:all .2s; text-transform:uppercase;
+  }
+  .present-toggle:hover { background:var(--blue); color:#fff; }
+  body.presenting .present-toggle { background:var(--blue); color:#fff; }
+
+  /* Client banner — only visible in presentation mode */
+  .client-banner {
+    display:none; text-align:center; padding:28px 32px 20px;
+    background:var(--surface); border-bottom:2px solid var(--border);
+  }
+  .client-banner .client-name {
+    font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:600;
+    color:var(--text); letter-spacing:2px;
+  }
+  .client-banner .client-sub {
+    font-family:'DM Mono',monospace; font-size:13px; color:var(--muted);
+    margin-top:6px; letter-spacing:1px;
+  }
+
+  /* Five Quadrant hero — only in presentation mode */
+  .quadrant-hero {
+    display:none; grid-column:1/-1;
+  }
+  .quadrant-hero .q-grid {
+    display:grid; grid-template-columns:repeat(5,1fr); gap:16px;
+  }
+  .q-hero-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:20px 16px; text-align:center; position:relative; overflow:hidden;
+  }
+  .q-hero-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  }
+  .q-hero-badge {
+    font-size:16px; font-weight:800; letter-spacing:1px; margin-bottom:6px;
+  }
+  .q-hero-name { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+  .q-hero-role { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-bottom:14px; }
+  .q-hero-pct {
+    font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:600; line-height:1;
+    margin-bottom:4px;
+  }
+  .q-hero-target { font-family:'DM Mono',monospace; font-size:12px; color:var(--muted); }
+  .q-hero-status { font-family:'DM Mono',monospace; font-size:12px; font-weight:700; margin-top:10px; letter-spacing:.5px; }
+  .q-hero-bar { margin:12px auto 0; width:80%; position:relative; height:6px; background:var(--dim); border-radius:3px; }
+
+  /* Presentation mode body overrides */
+  body.presenting .scroll-ticker { display:none; }
+  body.presenting .nav-links { display:none; }
+  body.presenting .client-banner { display:block; }
+  body.presenting .sidebar { display:none; }
+  body.presenting .news-section { display:none; }
+  body.presenting .quadrant-hero { display:block; }
+
+  body.presenting .main {
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:auto auto auto auto;
+  }
+  body.presenting .stat-cards {
+    grid-column:1/-1;
+    grid-template-columns:repeat(5,1fr);
+  }
+  body.presenting .perf-section { grid-column:1/-1; grid-row:auto; }
+  body.presenting .quadrant-hero { grid-column:1/-1; grid-row:auto; }
+  body.presenting .holdings-section { grid-column:1/-1; grid-row:auto; }
+
+  /* Bigger stat values in present mode */
+  body.presenting .stat-value { font-size:48px; }
+  body.presenting .stat-change { font-size:16px; }
+  body.presenting .card-label { font-size:13px; }
+  body.presenting .perf-table td { font-size:17px; padding:12px 14px; }
+  body.presenting .perf-table td:first-child { font-size:15px; }
+  body.presenting .perf-table th { font-size:13px; }
+  body.presenting td { font-size:15px; padding:12px 10px; }
+  body.presenting .t-sym { font-size:17px; }
+  body.presenting .t-name { font-size:13px; }
+  body.presenting .rs { font-size:14px; padding:5px 12px; }
+  body.presenting thead th { font-size:13px; }
 </style>
 </head>
 <body>
@@ -385,7 +467,14 @@
     <button class="nav-btn">MARKETS</button>
     <button class="nav-btn">ALERTS</button>
   </div>
+  <button class="present-toggle" id="present-toggle" onclick="togglePresent()">▶ PRESENT</button>
 </header>
+
+<!-- CLIENT BANNER (visible in presentation mode only) -->
+<div class="client-banner" id="client-banner">
+  <div class="client-name" id="client-name">Portfolio Review</div>
+  <div class="client-sub" id="client-sub">Loftin Wealth Partners · <span id="client-date"></span></div>
+</div>
 
 <div class="main">
 
@@ -401,14 +490,14 @@
     <!-- Market Status -->
     <div class="card">
       <div class="card-label">Market Status <span class="badge b-muted" id="mkt-badge">CHECKING</span></div>
-      <div class="stat-value" id="mkt-status" style="font-size:26px">—</div>
+      <div class="stat-value" id="mkt-status" style="font-size:34px">—</div>
       <div class="stat-change" id="mkt-detail" style="color:var(--muted)">NYSE · NASDAQ · CBOE</div>
-      <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted)" id="mkt-next"></div>
+      <div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)" id="mkt-next"></div>
     </div>
     <!-- S&P 500 -->
     <div class="card">
       <div class="card-label">S&P 500 <span class="badge b-muted" id="spy-badge">LOADING</span></div>
-      <div class="stat-value" id="spy-val" style="font-size:28px">—</div>
+      <div class="stat-value" id="spy-val" style="font-size:36px">—</div>
       <div class="stat-change" id="spy-change" style="color:var(--muted)">Fetching live data…</div>
       <div class="stat-sparkline"><canvas id="sp2"></canvas></div>
     </div>
@@ -427,7 +516,7 @@
     <div class="card">
       <div class="card-label">Fear &amp; Greed <span class="badge b-muted" id="fg-badge">LOADING</span></div>
       <div class="fg-arc-wrap">
-        <canvas id="fgArc" width="110" height="60"></canvas>
+        <canvas id="fgArc" width="130" height="70"></canvas>
         <div class="fg-val" id="fg-val" style="color:var(--muted)">—</div>
       </div>
       <div class="fg-zone" id="fg-zone" style="color:var(--muted)">Loading…</div>
@@ -460,24 +549,31 @@
     <div class="perf-note" id="perf-note">Benchmark returns are annualized, fetched live. Upload holdings file to populate LWP Portfolio row.</div>
   </div>
 
+  <!-- FIVE QUADRANT HERO (presentation mode only) -->
+  <div class="card quadrant-hero" id="quadrant-hero">
+    <div class="card-label">Five Quadrant Allocation Model <span class="badge b-gold">YOUR PORTFOLIO</span></div>
+    <div class="q-grid" id="q-hero-grid"></div>
+  </div>
+
   <!-- SIDEBAR -->
   <div class="sidebar">
     <!-- CSV Upload -->
     <div class="card">
-      <div class="card-label">Import Holdings <span class="badge b-blue" id="upload-badge">CSV / XLSX</span><button id="clear-btn" onclick="clearUpload()" title="Clear uploaded data" style="display:none;margin-left:8px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);cursor:pointer;font-size:10px;padding:1px 7px;line-height:16px;font-family:'DM Mono',monospace;letter-spacing:.5px">✕ clear</button></div>
+      <div class="card-label">Import Holdings <span class="badge b-blue" id="upload-badge">CSV / XLSX</span><button id="clear-btn" onclick="clearUpload()" title="Clear uploaded data" style="display:none;margin-left:8px;background:none;border:1px solid var(--border);border-radius:3px;color:var(--muted);cursor:pointer;font-size:12px;padding:3px 9px;line-height:16px;font-family:'DM Mono',monospace;letter-spacing:.5px">✕ clear</button></div>
       <div class="upload-zone" id="upload-zone">
         <div class="upload-icon">📂</div>
         <div class="upload-title">DRAG & DROP FILE HERE</div>
-        <div class="upload-sub">Drop your .XLSX or .CSV holdings file<br>Prices fetched live from Yahoo Finance</div>
+        <div class="upload-sub">Drop your .XLSX or .CSV holdings file<br>All data read from file — no internet required</div>
         <label for="csv-input" class="upload-browse-btn">or click to browse</label>
       </div>
       <input type="file" id="csv-input" accept=".xlsx,.xls,.csv" style="display:none">
       <div class="upload-status" id="upload-status"></div>
       <div class="csv-format-hint">
-        <strong>Required columns (Row 1 must be headers):</strong><br>
+        <strong>Required columns:</strong><br>
         Ticker &nbsp;·&nbsp; Quadrant &nbsp;·&nbsp; Quantity &nbsp;·&nbsp; Price<br>
-        <strong>Quadrant values:</strong> Q1 · Q2 · Q3 · Q4 · Q5<br>
-        No internet required — all values read from file.
+        <strong>Optional:</strong> RS Score (0–6)<br>
+        <strong>Performance rows (below holdings):</strong><br>
+        LWP YTD &nbsp;·&nbsp; LWP 1Y &nbsp;·&nbsp; LWP 3Y &nbsp;·&nbsp; LWP 5Y
       </div>
       <div class="last-updated" id="last-updated"></div>
     </div>
@@ -495,7 +591,7 @@
 
   <!-- HOLDINGS -->
   <div class="card holdings-section">
-    <div class="card-label">Holdings <span class="badge b-blue">13 POSITIONS · 5 QUADRANTS</span></div>
+    <div class="card-label">Holdings <span class="badge b-muted">AWAITING UPLOAD</span></div>
     <table>
       <thead><tr>
         <th>Asset</th><th>Quadrant</th><th>Weight</th><th>Price</th><th>Chg%</th><th>Value</th><th>RS</th><th>Action</th>
@@ -513,19 +609,74 @@
 </div>
 
 <script>
+// ── PRESENTATION MODE ──
+let presentMode = false;
+
+function togglePresent() {
+  presentMode = !presentMode;
+  document.body.classList.toggle('presenting', presentMode);
+  document.getElementById('present-toggle').textContent = presentMode ? '✕ EXIT' : '▶ PRESENT';
+  if (presentMode) {
+    // Set meeting date
+    document.getElementById('client-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    // Build quadrant hero if we have data
+    buildQuadrantHero();
+  }
+}
+
+// Store last uploaded quadrant data for hero rendering
+let lastQuadTotals = null;
+let lastTotalValue = 0;
+
+function buildQuadrantHero() {
+  const grid = document.getElementById('q-hero-grid');
+  const qDefs = [
+    {k:'Q1', name:'Cash & Bonds',  role:'Preservation · Liquidity',    lo:1,  hi:5,  c:'#4a7fa5'},
+    {k:'Q2', name:'Balanced',      role:'Income + Growth Anchor',       lo:10, hi:20, c:'#2d6a9f'},
+    {k:'Q3', name:'Dividends',     role:'Income · Inflation Hedge',     lo:15, hi:25, c:'#1a7a4a'},
+    {k:'Q4', name:'Growth',        role:'Capital Appreciation Engine',  lo:50, hi:60, c:'#0d3349'},
+    {k:'Q5', name:'Alternatives',  role:'Low Correlation · Diversify',  lo:5,  hi:10, c:'#6b9fc2'},
+  ];
+  grid.innerHTML = '';
+  qDefs.forEach(q => {
+    const act = lastTotalValue > 0 && lastQuadTotals ? (lastQuadTotals[q.k] / lastTotalValue * 100) : 0;
+    const actR = act > 0 ? act.toFixed(1) + '%' : '—';
+    const inBand = act >= q.lo && act <= q.hi;
+    const nearEdge = inBand && (act - q.lo < 2 || q.hi - act < 2);
+    const statusLabel = act === 0 ? 'NO DATA' : !inBand ? 'OUT OF BAND' : nearEdge ? 'NEAR EDGE' : 'IN BAND';
+    const statusColor = act === 0 ? 'var(--muted)' : !inBand ? '#a82030' : nearEdge ? '#7a5a00' : '#147040';
+
+    const barScale = 30;
+    const barLeft = (q.lo / barScale * 100).toFixed(1);
+    const barWidth = ((q.hi - q.lo) / barScale * 100).toFixed(1);
+    const needle = act > 0 ? Math.min(Math.max((act / barScale * 100), 1), 99).toFixed(1) : -10;
+
+    grid.innerHTML += `<div class="q-hero-card" style="border-top:4px solid ${q.c}">
+      <div class="q-hero-badge" style="color:${q.c}">${q.k}</div>
+      <div class="q-hero-name">${q.name}</div>
+      <div class="q-hero-role">${q.role}</div>
+      <div class="q-hero-pct" style="color:${q.c}">${actR}</div>
+      <div class="q-hero-target">Target: ${q.lo}–${q.hi}%</div>
+      <div class="q-hero-bar">
+        <div style="position:absolute;left:${barLeft}%;width:${barWidth}%;height:100%;background:${q.c}35;border-radius:3px;border:1px solid ${q.c}60"></div>
+        ${act > 0 ? `<div style="position:absolute;left:${needle}%;top:-4px;width:4px;height:14px;background:${q.c};border-radius:2px;transform:translateX(-50%);box-shadow:0 0 6px ${q.c}90"></div>` : ''}
+      </div>
+      <div class="q-hero-status" style="color:${statusColor}">${statusLabel}</div>
+    </div>`;
+  });
+}
+
 // ── CLOCK ──
 function tick() { document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-US',{hour12:false}); }
 setInterval(tick,1000); tick();
 
 // ── TICKER ──
 const tickerItems = [
-  ['PJLXX', 1.00,   0.00], ['PRWCX', 32.84, +0.42], ['CGDV',  32.11, +0.28],
-  ['RDVY',  49.62, +0.31], ['VIG',  190.44, +0.19], ['QQQ',  454.80, +0.79],
-  ['VOO',  520.22, +0.54], ['TCAF',  43.18, +0.61], ['MGK',  320.44, +0.88],
-  ['EFA',   84.32, -0.22], ['VBR',  196.88, +0.41], ['IEMG',  52.14, -0.38],
-  ['CEDIX', 14.82, +0.31], ['SPY',  528.14, +0.51], ['VIX',   18.42, +1.84],
+  ['S&P 500', 5280, +0.51], ['NASDAQ', 16820, +0.79], ['DOW', 39450, +0.34],
+  ['RUSSELL 2K', 2085, +0.41], ['VIX', 18.4, +1.84], ['10Y YIELD', 4.28, -0.03],
+  ['GOLD', 2340, +0.22], ['OIL (WTI)', 78.50, -0.38], ['USD/EUR', 1.085, +0.12],
 ];
-const inner = tickerItems.map(([s,p,c])=>`<span>${s} <strong class="${c>=0?'t-pos':'t-neg'}">${c>=0?'▲':'▼'} $${Math.abs(p).toLocaleString()} (${c>0?'+':''}${c}%)</strong></span>`).join('');
+const inner = tickerItems.map(([s,p,c])=>`<span>${s} <strong class="${c>=0?'t-pos':'t-neg'}">${c>=0?'▲':'▼'} ${p>=100?'$':''}${Math.abs(p).toLocaleString()} (${c>0?'+':''}${c}%)</strong></span>`).join('');
 document.getElementById('ticker').innerHTML = inner+inner;
 
 // ── SPARKLINES ──
@@ -534,7 +685,7 @@ function sparkline(id, data, color) {
   if (!el) return;
   const ctx = el.getContext('2d');
   const g = ctx.createLinearGradient(0,0,0,38);
-  g.addColorStop(0, color+'33'); g.addColorStop(1,'transparent');
+  g=ctx.createLinearGradient(13,0,117,0);
   new Chart(ctx,{
     type:'line',
     data:{ labels:data.map((_,i)=>i), datasets:[{data,borderColor:color,borderWidth:1.5,fill:true,backgroundColor:g,pointRadius:0,tension:.4}]},
@@ -677,13 +828,13 @@ setInterval(fetchSPY, 120000);
 // ── FEAR & GREED (CNN) ──
 function drawArc(s){
   const cv=document.getElementById('fgArc'),ctx=cv.getContext('2d');
-  ctx.clearRect(0,0,110,60);
-  ctx.beginPath(); ctx.arc(55,58,44,Math.PI,0,false);
+  ctx.clearRect(0,0,130,70);
+  ctx.beginPath(); ctx.arc(65,68,52,Math.PI,0,false);
   ctx.lineWidth=8; ctx.strokeStyle='#d0dce8'; ctx.stroke();
-  const g=ctx.createLinearGradient(11,0,99,0);
-  g.addColorStop(0,'#d95f6b'); g.addColorStop(.3,'#d98040');
+  const g=ctx.createLinearGradient(13,0,117,0);
+  g=ctx.createLinearGradient(13,0,117,0);
   g.addColorStop(.5,'#c9a84c'); g.addColorStop(.7,'#7db8da'); g.addColorStop(1,'#4aad84');
-  ctx.beginPath(); ctx.arc(55,58,44,Math.PI,Math.PI+(s/100)*Math.PI,false);
+  ctx.beginPath(); ctx.arc(65,68,52,Math.PI,Math.PI+(s/100)*Math.PI,false);
   ctx.lineWidth=8; ctx.strokeStyle=g; ctx.lineCap='round'; ctx.stroke();
 }
 function fgInfo(s){
@@ -899,57 +1050,55 @@ async function loadBenchmarks() {
   document.getElementById('perf-note').textContent = 'Benchmark returns are annualized (except YTD & 1Y which are total return). Data via Yahoo Finance.';
 }
 
-// Calculate LWP Portfolio returns from uploaded holdings
-async function loadPortfolioReturns(rows) {
-  document.getElementById('perf-badge').textContent = 'LOADING…';
-  const tickers = [...new Set(rows.map(r => r.ticker))];
-  const totalValue = rows.reduce((s, r) => s + r.value, 0);
-  if (totalValue <= 0) return;
-
-  // Calculate weight for each ticker
-  const weights = {};
-  rows.forEach(r => {
-    weights[r.ticker] = (weights[r.ticker] || 0) + r.value;
-  });
-  Object.keys(weights).forEach(k => { weights[k] /= totalValue; });
-
-  const ranges = ['ytd', '1y', '2y', '3y', '5y'];
-  const portfolioReturns = { ytd: 0, y1: 0, y2: 0, y3: 0, y5: 0 };
-  const rangeKeys = { ytd: 'ytd', '1y': 'y1', '2y': 'y2', '3y': 'y3', '5y': 'y5' };
-  const coveredWeight = { ytd: 0, y1: 0, y2: 0, y3: 0, y5: 0 };
-
-  for (const ticker of tickers) {
-    console.log(`[LWP] Portfolio history: ${ticker} (weight: ${(weights[ticker]*100).toFixed(1)}%)`);
-    for (const range of ranges) {
-      const ret = await yahooReturn(ticker, range);
-      if (ret) {
-        const years = rangeYears(range);
-        const annRet = annualizedReturn(ret.startPrice, ret.endPrice, years);
-        if (annRet != null) {
-          const key = rangeKeys[range];
-          portfolioReturns[key] += annRet * weights[ticker];
-          coveredWeight[key] += weights[ticker];
-        }
+// Parse portfolio performance from the Performance sheet
+// Accepts Label | Value rows like: "YTD" | 4.2  or  "1 Year" | 11.8  or  "LWP 3Y" | 8.4
+// Also looks for "Client" | "Name" row to populate presentation banner
+function parsePerformance(perfRows) {
+  const perf = { ytd: null, y1: null, y2: null, y3: null, y5: null, clientName: null };
+  if (!perfRows || perfRows.length === 0) return perf;
+  const patterns = {
+    ytd: /ytd/i,
+    y1:  /1\s*y(ear|r)?/i,
+    y2:  /2\s*y(ear|r)?/i,
+    y3:  /3\s*y(ear|r)?/i,
+    y5:  /5\s*y(ear|r)?/i,
+  };
+  for (const row of perfRows) {
+    if (!row || row.length < 2) continue;
+    const label = String(row[0] || '').trim();
+    const valStr = String(row[1] || '').trim();
+    // Check for client name row
+    if (/^client/i.test(label) && valStr && !perf.clientName) {
+      perf.clientName = valStr;
+      console.log(`[LWP] Client name: "${valStr}"`);
+      continue;
+    }
+    const val = parseFloat(valStr.replace(/[^0-9.\-]/g, ''));
+    if (!label || isNaN(val)) continue;
+    for (const [key, regex] of Object.entries(patterns)) {
+      if (regex.test(label) && perf[key] === null) {
+        perf[key] = val;
+        console.log(`[LWP] Performance: "${label}" → ${key} = ${val}%`);
       }
-      await new Promise(r => setTimeout(r, 150));
     }
   }
+  return perf;
+}
 
-  // Scale up if some tickers had no data (assume they performed at portfolio average)
-  const final = {};
-  for (const k of ['ytd', 'y1', 'y2', 'y3', 'y5']) {
-    if (coveredWeight[k] > 0.3) {
-      // Extrapolate: if we covered 80% of the portfolio, scale up the return
-      final[k] = portfolioReturns[k] / coveredWeight[k];
-    } else {
-      final[k] = null; // not enough data
-    }
+// Display portfolio returns from Excel data
+function loadPortfolioReturns(perfData) {
+  const hasAny = ['ytd','y1','y2','y3','y5'].some(k => perfData[k] !== null);
+  if (hasAny) {
+    updatePerfRow(0, perfData);
+    document.getElementById('perf-badge').textContent = 'LIVE DATA';
+    const count = ['ytd','y1','y2','y3','y5'].filter(k => perfData[k] !== null).length;
+    document.getElementById('perf-note').textContent =
+      `LWP Portfolio returns from uploaded file (${count}/5 periods). Benchmarks via Yahoo Finance.`;
   }
-
-  updatePerfRow(0, final);
-  document.getElementById('perf-badge').textContent = 'LIVE DATA';
-  document.getElementById('perf-note').textContent =
-    `LWP Portfolio: weighted return across ${tickers.length} holdings (${(Math.max(...Object.values(coveredWeight))*100).toFixed(0)}% coverage). Benchmarks annualized via Yahoo Finance.`;
+  // Set client name for presentation mode
+  if (perfData.clientName) {
+    document.getElementById('client-name').textContent = perfData.clientName + ' — Portfolio Review';
+  }
 }
 
 // Start loading benchmarks immediately
@@ -957,31 +1106,19 @@ loadBenchmarks();
 
 // ── OLD CHART TABS REMOVED ──
 
-// ── FIVE QUADRANT MODEL ──
-// Target ranges per LWP Investment Framework (Mod. Aggressive profile)
+// ── FIVE QUADRANT MODEL ── (empty state — shows target ranges, no allocations until upload)
 const quadrants = [
-  {n:'Q1', name:'Cash & Bonds',  role:'Preservation · Liquidity',    lo:1,  hi:5,  act:4.9,  c:'#4a7fa5'},
-  {n:'Q2', name:'Balanced',      role:'Income + Growth Anchor',       lo:10, hi:20, act:14.9, c:'#2d6a9f'},
-  {n:'Q3', name:'Dividends',     role:'Income · Inflation Hedge',     lo:15, hi:25, act:16.1, c:'#1a7a4a'},
-  {n:'Q4', name:'Growth',        role:'Capital Appreciation Engine',  lo:50, hi:60, act:58.4, c:'#0d3349'},
-  {n:'Q5', name:'Alternatives',  role:'Low Correlation · Diversify',  lo:5,  hi:10, act:5.7,  c:'#6b9fc2'},
+  {n:'Q1', name:'Cash & Bonds',  role:'Preservation · Liquidity',    lo:1,  hi:5,  c:'#4a7fa5'},
+  {n:'Q2', name:'Balanced',      role:'Income + Growth Anchor',       lo:10, hi:20, c:'#2d6a9f'},
+  {n:'Q3', name:'Dividends',     role:'Income · Inflation Hedge',     lo:15, hi:25, c:'#1a7a4a'},
+  {n:'Q4', name:'Growth',        role:'Capital Appreciation Engine',  lo:50, hi:60, c:'#0d3349'},
+  {n:'Q5', name:'Alternatives',  role:'Low Correlation · Diversify',  lo:5,  hi:10, c:'#6b9fc2'},
 ];
 const ql = document.getElementById('quadrant-list');
 quadrants.forEach(q=>{
-  // In-band = OK, within 2pts of boundary = WARN, outside band = ALERT
-  const inBand = q.act >= q.lo && q.act <= q.hi;
-  const nearEdge = !inBand ? false : (q.act - q.lo < 2 || q.hi - q.act < 2);
-  const dc = !inBand ? 'd-alert' : nearEdge ? 'd-warn' : 'd-ok';
-  const mid = (q.lo + q.hi) / 2;
-  const driftVal = (q.act - mid).toFixed(1);
-  const statusLabel = !inBand ? 'OUT OF BAND' : nearEdge ? 'NEAR EDGE' : 'IN BAND';
-  const statusColor = !inBand ? '#c0392b' : nearEdge ? '#8a6000' : '#1a7a4a';
-
-  // Range bar: map lo–hi onto a 0–100 scale (0–30% total range shown)
   const barScale = 30;
   const barLeft  = (q.lo / barScale * 100).toFixed(1);
   const barWidth = ((q.hi - q.lo) / barScale * 100).toFixed(1);
-  const needlePos = (q.act / barScale * 100).toFixed(1);
 
   ql.innerHTML+=`<div class="q-row">
     <div class="q-badge" style="background:${q.c}15;color:${q.c};border:1px solid ${q.c}35">${q.n}</div>
@@ -990,15 +1127,14 @@ quadrants.forEach(q=>{
       <div class="q-role">${q.role}</div>
       <div style="margin-top:5px;position:relative;height:4px;background:var(--border);border-radius:2px;overflow:visible">
         <div style="position:absolute;left:${barLeft}%;width:${barWidth}%;height:100%;background:${q.c}30;border-radius:2px;border:1px solid ${q.c}50"></div>
-        <div style="position:absolute;left:${needlePos}%;top:-3px;width:3px;height:10px;background:${q.c};border-radius:1px;transform:translateX(-50%);box-shadow:0 0 4px ${q.c}60"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)">
-        <span>${q.lo}%</span><span style="color:${q.c};font-weight:700">${q.act}% actual</span><span>${q.hi}%</span>
+      <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+        <span>${q.lo}%</span><span style="color:${q.c};font-weight:700">—</span><span>${q.hi}%</span>
       </div>
     </div>
     <div style="text-align:right;flex-shrink:0;padding-left:8px">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:${statusColor};letter-spacing:.5px">${statusLabel}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">tgt ${q.lo}–${q.hi}%</div>
+      <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.5px">AWAITING DATA</div>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">tgt ${q.lo}–${q.hi}%</div>
     </div>
   </div>`;
 });
@@ -1023,26 +1159,7 @@ watchData.forEach(w=>{
   </div>`;
 });
 
-// ── HOLDINGS ──
-// Q1: PJLXX (100%) | Q2: PRWCX (100%) | Q3: CGDV/RDVY/VIG (⅓ each)
-// Q4: QQQ×2 VOO×2 TCAF×2 MGK×1 EFA×1 VBR×1 IEMG×1 (10 parts)
-// Q5: CEDIX (100%)
-const holdings = [
-  {s:'PJLXX',n:'T. Rowe Price Gov. MM',      p:  1.00, c: 0.00, v: 14231, q:'Q1', rs:3, w:'100%'},
-  {s:'PRWCX',n:'T. Rowe Capital Apprec.',     p: 32.84, c:+0.42, v: 42750, q:'Q2', rs:4, w:'100%'},
-  {s:'CGDV', n:'Cap. Group Div. Value ETF',   p: 32.11, c:+0.28, v: 15180, q:'Q3', rs:4, w:'⅓'},
-  {s:'RDVY', n:'First Trust Rising Div.',     p: 49.62, c:+0.31, v: 15180, q:'Q3', rs:4, w:'⅓'},
-  {s:'VIG',  n:'Vanguard Div. Appreciation', p:190.44, c:+0.19, v: 15181, q:'Q3', rs:3, w:'⅓'},
-  {s:'QQQ',  n:'Invesco NASDAQ 100 ETF',     p:454.80, c:+0.79, v: 34154, q:'Q4', rs:5, w:'2/10'},
-  {s:'VOO',  n:'Vanguard S&P 500 ETF',       p:520.22, c:+0.54, v: 34154, q:'Q4', rs:5, w:'2/10'},
-  {s:'TCAF', n:'T. Rowe Active Factor ETF',  p: 43.18, c:+0.61, v: 34154, q:'Q4', rs:4, w:'2/10'},
-  {s:'MGK',  n:'Vanguard Mega Cap Growth',   p:320.44, c:+0.88, v: 17077, q:'Q4', rs:5, w:'1/10'},
-  {s:'EFA',  n:'iShares MSCI EAFE ETF',      p: 84.32, c:-0.22, v: 17077, q:'Q4', rs:3, w:'1/10'},
-  {s:'VBR',  n:'Vanguard Small Cap Value',   p:196.88, c:+0.41, v: 17077, q:'Q4', rs:4, w:'1/10'},
-  {s:'IEMG', n:'iShares Core MSCI EM',       p: 52.14, c:-0.38, v: 17077, q:'Q4', rs:3, w:'1/10'},
-  {s:'CEDIX',n:'Calvert Equity Diversified', p: 14.82, c:+0.31, v: 14231, q:'Q5', rs:4, w:'100%'},
-];
-// qMeta and rsInfo defined once below in upload section — used by both static and upload renders
+// ── HOLDINGS ── (empty state — populated on file upload)
 const staticQMeta = {
   Q1:{label:'Q1 — Cash & Bonds',  c:'#4a7fa5'},
   Q2:{label:'Q2 — Balanced',      c:'#2d6a9f'},
@@ -1051,29 +1168,7 @@ const staticQMeta = {
   Q5:{label:'Q5 — Alternatives',  c:'#6b9fc2'},
 };
 function rsInfo(s){ return s>=4.6?{l:'BUY',cls:'rs-buy'}:s>=3.6?{l:'ADD',cls:'rs-add'}:s>=2.1?{l:'HOLD',cls:'rs-hold'}:s>=1.1?{l:'TRIM',cls:'rs-trim'}:{l:'SELL',cls:'rs-sell'}; }
-let lastQStatic = null;
-const tb = document.getElementById('holdings-tbody');
-holdings.forEach(h=>{
-  const qc = staticQMeta[h.q].c;
-  if(h.q !== lastQStatic){
-    tb.innerHTML+=`<tr style="background:${qc}18"><td colspan="8" style="padding:5px 8px 4px;font-size:9px;font-weight:800;letter-spacing:2px;color:${qc};text-transform:uppercase;border-bottom:2px solid ${qc}60">${staticQMeta[h.q].label}</td></tr>`;
-    lastQStatic=h.q;
-  }
-  const pos=h.c>=0; const rs=rsInfo(h.rs);
-  const rsI=rsInfo(h.rs);
-  const rsFmt = h.rs % 1 === 0 ? h.rs.toFixed(0) : h.rs.toFixed(2);
-  const rsDisplay=`<span class="rs ${rsI.cls}" style="font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700">${rsFmt}</span>`;
-  tb.innerHTML+=`<tr>
-    <td><div class="t-sym">${h.s}</div><div class="t-name">${h.n}</div></td>
-    <td><span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px;border:1px solid ${qc}30">${h.q}</span></td>
-    <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center">${h.w}</td>
-    <td>$${h.p.toLocaleString()}</td>
-    <td class="${pos?'pos':'neg'}">${pos?'▲':'▼'} ${Math.abs(h.c)}%</td>
-    <td>$${h.v.toLocaleString()}</td>
-    <td>${rsDisplay}</td>
-    <td><span class="rs ${rs.cls}" style="cursor:pointer" onclick="window.open('${dwLink(h.s)}','_blank')" title="View ${h.s} on Nasdaq Dorsey Wright">${rs.l}</span></td>
-  </tr>`;
-});
+document.getElementById('holdings-tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px 20px;color:var(--muted);font-size:14px;font-family:'Raleway',sans-serif">Upload a holdings file to view positions</td></tr>`;
 
 // ── DORSEY WRIGHT LINK ── opens security page in new tab (requires NDW subscription)
 function dwLink(ticker) {
@@ -1137,11 +1232,17 @@ function showStatus(msg, type) {
 // ── Parse XLSX or CSV — requires header row: Ticker | Quadrant | Quantity | Price
 function parseFile(arrayBuffer, filename) {
   const ext = filename.split('.').pop().toLowerCase();
-  let rows;
+  let rows, perfRows = [];
   if (ext === 'xlsx' || ext === 'xls') {
     if (typeof XLSX === 'undefined') throw new Error('SheetJS not loaded — try refreshing.');
     const wb = XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
     rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1, defval:'' });
+    // Check for a "Performance" sheet
+    const perfSheet = wb.SheetNames.find(n => /perf/i.test(n));
+    if (perfSheet) {
+      perfRows = XLSX.utils.sheet_to_json(wb.Sheets[perfSheet], { header:1, defval:'' });
+      console.log(`[LWP] Found Performance sheet: "${perfSheet}" with ${perfRows.length} rows`);
+    }
   } else {
     const text = new TextDecoder().decode(arrayBuffer);
     rows = text.trim().split(/\r?\n/).map(l => l.split(',').map(c => c.replace(/['"]/g,'').trim()));
@@ -1189,7 +1290,7 @@ function parseFile(arrayBuffer, filename) {
     positions.push({ ticker, quad: QUAD_RANGES[quad] ? quad : 'UNKNOWN', qty, price, rawQuad, rs });
   }
   if (positions.length === 0) throw new Error('No valid data rows found after the header.');
-  return positions;
+  return { positions, perfRows };
 }
 
 // ── Rebuild all dashboard panels
@@ -1204,6 +1305,11 @@ function refreshDashboard(rows) {
 
   const quadTotals = {Q1:0,Q2:0,Q3:0,Q4:0,Q5:0,UNKNOWN:0};
   rows.forEach(r => { quadTotals[r.quad] = (quadTotals[r.quad]||0) + r.value; });
+
+  // Store for presentation mode quadrant hero
+  lastQuadTotals = quadTotals;
+  lastTotalValue = totalValue;
+  if (presentMode) buildQuadrantHero();
 
   const ql = document.getElementById('quadrant-list');
   ql.innerHTML = '';
@@ -1223,19 +1329,19 @@ function refreshDashboard(rows) {
     ql.innerHTML += `<div class="q-row">
       <div class="q-badge" style="background:${q.c}18;color:${q.c};border:1px solid ${q.c}40">${qk}</div>
       <div style="min-width:0;flex:1">
-        <div class="q-name">${q.name} <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);font-weight:400">${qVal}</span></div>
+        <div class="q-name">${q.name} <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);font-weight:400">${qVal}</span></div>
         <div class="q-role">${q.role}</div>
         <div style="margin-top:5px;position:relative;height:4px;background:var(--border);border-radius:2px;overflow:visible">
           <div style="position:absolute;left:${barLeft}%;width:${barWidth}%;height:100%;background:${q.c}2a;border-radius:2px;border:1px solid ${q.c}55"></div>
           <div style="position:absolute;left:${needle}%;top:-3px;width:3px;height:10px;background:${q.c};border-radius:1px;transform:translateX(-50%);box-shadow:0 0 5px ${q.c}80;transition:left 0.8s ease"></div>
         </div>
-        <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:'DM Mono',monospace;font-size:8px;color:var(--muted)">
+        <div style="display:flex;justify-content:space-between;margin-top:3px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
           <span>${q.lo}%</span><span style="color:${q.c};font-weight:700">${actR}% actual</span><span>${q.hi}%</span>
         </div>
       </div>
       <div style="text-align:right;flex-shrink:0;padding-left:8px">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;font-weight:700;color:${statusColor};letter-spacing:.5px">${statusLabel}</div>
-        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">tgt ${q.lo}\u2013${q.hi}%</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:${statusColor};letter-spacing:.5px">${statusLabel}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">tgt ${q.lo}\u2013${q.hi}%</div>
       </div>
     </div>`;
   });
@@ -1249,7 +1355,7 @@ function refreshDashboard(rows) {
   sorted.forEach(h => {
     const qc = (qMeta[h.quad]||qMeta.UNKNOWN).c;
     if (h.quad !== lastQ) {
-      tb.innerHTML += `<tr style="background:${qc}18"><td colspan="8" style="padding:5px 8px 4px;font-size:9px;font-weight:800;letter-spacing:2px;color:${qc};text-transform:uppercase;border-bottom:2px solid ${qc}60">${(qMeta[h.quad]||qMeta.UNKNOWN).label}</td></tr>`;
+      tb.innerHTML += `<tr style="background:${qc}18"><td colspan="8" style="padding:5px 8px 4px;font-size:12px;font-weight:800;letter-spacing:2px;color:${qc};text-transform:uppercase;border-bottom:2px solid ${qc}60">${(qMeta[h.quad]||qMeta.UNKNOWN).label}</td></tr>`;
       lastQ = h.quad;
     }
     const pct   = ((h.value/totalValue)*100).toFixed(1)+'%';
@@ -1257,12 +1363,12 @@ function refreshDashboard(rows) {
     const val   = '$'+Math.round(h.value).toLocaleString();
     const rs    = (h.rs != null && h.rs >= 0) ? rsInfo(h.rs) : null;
     const rsScoreDisplay = (h.rs != null && h.rs >= 0)
-      ? `<span class="rs ${rsInfo(h.rs).cls}" style="font-size:10px;padding:2px 8px;border-radius:3px;font-weight:700">${h.rs % 1 === 0 ? h.rs.toFixed(0) : h.rs.toFixed(2)}</span>`
+      ? `<span class="rs ${rsInfo(h.rs).cls}" style="font-size:13px;padding:4px 10px;border-radius:3px;font-weight:700">${h.rs % 1 === 0 ? h.rs.toFixed(0) : h.rs.toFixed(2)}</span>`
       : '—';
     tb.innerHTML += `<tr>
       <td><div class="t-sym">${h.ticker}</div></td>
-      <td><span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px;border:1px solid ${qc}30">${h.quad}</span></td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:center">${pct}</td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px;border:1px solid ${qc}30">${h.quad}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:14px;color:var(--muted);text-align:center">${pct}</td>
       <td>${price}</td>
       <td>\u2014</td>
       <td>${val}</td>
@@ -1307,11 +1413,12 @@ function handleFile(file) {
   showStatus('\u27f3 Reading file\u2026', 'success');
   file.arrayBuffer().then(buf => {
     try {
-      const positions = parseFile(buf, file.name);
-      const rows = positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs }));
+      const parsed = parseFile(buf, file.name);
+      const rows = parsed.positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs }));
       refreshDashboard(rows);
-      // Load portfolio returns into the performance panel
-      loadPortfolioReturns(rows);
+      // Parse and display portfolio performance from Performance sheet
+      const perfData = parsePerformance(parsed.perfRows);
+      loadPortfolioReturns(perfData);
     } catch(err) {
       showStatus('\u2715 ' + err.message, 'error');
       console.error(err);
