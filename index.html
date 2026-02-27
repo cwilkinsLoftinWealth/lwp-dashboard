@@ -204,17 +204,20 @@
     border-top:1px solid var(--border); padding-top:6px;
   }
 
-  /* ── PERF CHART ── */
-  .chart-section { grid-column:1/4; grid-row:2; }
-  .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
-  .chart-title { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:500; color:var(--text); letter-spacing:.5px; }
-  .chart-tabs { display:flex; gap:3px; }
-  .tab {
-    padding:4px 11px; font-family:'DM Mono',monospace; font-size:10px;
-    border:1px solid var(--border); background:transparent; color:var(--muted);
-    cursor:pointer; border-radius:3px; transition:all .2s;
-  }
-  .tab.active,.tab:hover { border-color:var(--blue); color:var(--blue); background:rgba(91,158,201,.07); }
+  /* ── PERF & BENCHMARK PANEL ── */
+  .perf-section { grid-column:1/4; grid-row:2; }
+  .perf-table { width:100%; border-collapse:collapse; margin-top:6px; }
+  .perf-table th { font-family:'DM Mono',monospace; font-size:8.5px; font-weight:700; letter-spacing:1.5px;
+    color:var(--muted); text-transform:uppercase; text-align:right; padding:6px 10px; border-bottom:1px solid var(--border); }
+  .perf-table th:first-child { text-align:left; }
+  .perf-table td { font-family:'DM Mono',monospace; font-size:11px; padding:8px 10px;
+    border-bottom:1px solid var(--border); text-align:right; vertical-align:middle; }
+  .perf-table td:first-child { text-align:left; font-size:11px; font-weight:700; color:var(--text); }
+  .perf-table tr:last-child td { border-bottom:none; }
+  .perf-table tr.portfolio-row td { color:var(--blue); font-weight:700; }
+  .perf-table .perf-loading { color:var(--muted); font-size:10px; }
+  .perf-note { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); margin-top:8px;
+    padding-top:7px; border-top:1px solid var(--border); letter-spacing:.3px; }
   canvas { width:100% !important; }
 
   /* ── SIDEBAR ── */
@@ -251,7 +254,7 @@
   .w-chg  { font-family:'DM Mono',monospace; font-size:10px; }
 
   /* ── HOLDINGS TABLE ── */
-  .holdings-section { grid-column:1/3; grid-row:3; }
+  .holdings-section { grid-column:1/4; grid-row:3; }
   table { width:100%; border-collapse:collapse; }
   thead th {
     font-size:8.5px; font-weight:700; letter-spacing:1.5px; color:var(--muted);
@@ -274,28 +277,6 @@
   .rs-hold { background:#fef6d8; color:#7a5500; border:1px solid #e8d080; }
   .rs-trim { background:#fdebd0; color:#8a4000; border:1px solid #f0b870; }
   .rs-sell { background:#fde0e3; color:#8a1a24; border:1px solid #f0a0a8; }
-
-  /* ── BENCHMARK PANEL ── */
-  .benchmark-section { grid-column:3; grid-row:3; }
-  .bm-table { width:100%; border-collapse:collapse; margin-top:6px; }
-  .bm-table th { font-family:'DM Mono',monospace; font-size:8px; font-weight:700; letter-spacing:1px;
-    color:var(--muted); text-transform:uppercase; text-align:right; padding:4px 6px; border-bottom:1px solid var(--border); }
-  .bm-table th:first-child { text-align:left; }
-  .bm-table td { font-family:'DM Mono',monospace; font-size:10px; padding:5px 6px;
-    border-bottom:1px solid var(--border); text-align:right; vertical-align:middle; }
-  .bm-table td:first-child { text-align:left; font-size:10px; font-weight:700; color:var(--text); }
-  .bm-table tr:last-child td { border-bottom:none; }
-  .bm-table tr.portfolio-row td { color:var(--blue); }
-  .bm-note { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted); margin-top:8px;
-    padding-top:7px; border-top:1px solid var(--border); letter-spacing:.3px; }
-  .bm-edit-btn { font-family:'DM Mono',monospace; font-size:8px; color:var(--muted);
-    background:none; border:1px solid var(--border); border-radius:2px; padding:1px 7px;
-    cursor:pointer; float:right; margin-top:-2px; letter-spacing:.5px; }
-  .bm-edit-btn:hover { border-color:var(--blue); color:var(--blue); }
-  .bm-input { background:var(--surface2); border:1px solid var(--border); border-radius:2px;
-    color:var(--text); font-family:'DM Mono',monospace; font-size:10px; width:60px;
-    text-align:right; padding:2px 4px; }
-  .bm-input:focus { outline:none; border-color:var(--blue); }
 
   /* ── NEWS ── */
   .news-section { grid-column:1/4; grid-row:4; }
@@ -454,25 +435,29 @@
     </div>
   </div>
 
-  <!-- PERFORMANCE CHART -->
-  <div class="card chart-section">
-    <div class="chart-header">
-      <div class="chart-title">Portfolio Performance</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="chart-tabs" id="perf-tabs">
-          <button class="tab active" data-range="ytd">YTD</button>
-          <button class="tab" data-range="1y">1Y</button>
-          <button class="tab" data-range="2y">2Y</button>
-          <button class="tab" data-range="3y">3Y</button>
-          <button class="tab" data-range="5y">5Y</button>
-        </div>
-        <button class="tab" id="perf-toggle" style="margin-left:6px;font-weight:700">$</button>
-      </div>
-    </div>
-    <div id="perf-placeholder" style="text-align:center;padding:40px 0;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
-      Upload holdings file to generate performance chart
-    </div>
-    <canvas id="perfChart" height="175" style="display:none"></canvas>
+  <!-- PERFORMANCE & BENCHMARKS (unified) -->
+  <div class="card perf-section">
+    <div class="card-label">Performance & Benchmarks <span class="badge b-blue" id="perf-badge">UPLOAD TO POPULATE</span></div>
+    <table class="perf-table" id="perf-table">
+      <thead>
+        <tr>
+          <th style="text-align:left">Strategy / Index</th>
+          <th>YTD</th>
+          <th>1 Year</th>
+          <th>2 Year</th>
+          <th>3 Year</th>
+          <th>5 Year</th>
+        </tr>
+      </thead>
+      <tbody id="perf-tbody">
+        <tr class="portfolio-row"><td>▶ LWP Portfolio</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>MSCI ACWI</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td></tr>
+        <tr><td>S&P 500</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td></tr>
+        <tr><td>60/40 Blend</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td></tr>
+        <tr><td>Barclays Agg (AGG)</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td></tr>
+      </tbody>
+    </table>
+    <div class="perf-note" id="perf-note">Benchmark returns are annualized, fetched live. Upload holdings file to populate LWP Portfolio row.</div>
   </div>
 
   <!-- SIDEBAR -->
@@ -517,28 +502,6 @@
       </tr></thead>
       <tbody id="holdings-tbody"></tbody>
     </table>
-  </div>
-
-  <!-- BENCHMARK COMPARISON -->
-  <div class="card benchmark-section">
-    <div class="card-label">
-      Benchmark Comparison <span class="badge b-blue">YTD · 1Y · 3Y</span>
-      <button class="bm-edit-btn" onclick="toggleBmEdit()" id="bm-edit-btn">✎ edit</button>
-    </div>
-    <table class="bm-table" id="bm-table">
-      <thead>
-        <tr>
-          <th>Strategy / Index</th>
-          <th>YTD</th>
-          <th>1 Year</th>
-          <th>3 Year</th>
-        </tr>
-      </thead>
-      <tbody id="bm-tbody"></tbody>
-    </table>
-    <div class="bm-note" id="bm-note">
-      Returns are price-based. Click <strong style="color:var(--blue)">✎ edit</strong> to update figures.
-    </div>
   </div>
 
   <!-- NEWS -->
@@ -774,268 +737,194 @@ async function fetchFearGreed() {
 fetchFearGreed();
 setInterval(fetchFearGreed, 300000);
 
-// ── PERFORMANCE CHART (dynamic, built after file upload) ──
-let perfChart = null;
-let perfData = null; // { labels:[], portfolio:[], benchmark:[], range:'ytd' }
-let perfMode = 'dollar'; // 'dollar' or 'pct'
-let perfRange = 'ytd';
-let uploadedRows = null; // store uploaded rows for chart rebuild
+// ── PERFORMANCE & BENCHMARKS (unified panel) ──────────────────────────────
 
-function buildPerfChart(labels, portVals, bmVals) {
-  const canvas = document.getElementById('perfChart');
-  const placeholder = document.getElementById('perf-placeholder');
-  placeholder.style.display = 'none';
-  canvas.style.display = 'block';
-
-  if (perfChart) perfChart.destroy();
-
-  const ctx = canvas.getContext('2d');
-  const grad = ctx.createLinearGradient(0,0,0,175);
-  grad.addColorStop(0,'rgba(74,127,165,0.22)'); grad.addColorStop(1,'rgba(74,127,165,0)');
-
-  const isDollar = perfMode === 'dollar';
-  const portDisplay = isDollar ? portVals : portVals.map(v => ((v / portVals[0]) - 1) * 100);
-  const bmDisplay = isDollar ? bmVals : bmVals.map(v => ((v / bmVals[0]) - 1) * 100);
-
-  perfChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'LWP Portfolio',
-          data: portDisplay,
-          borderColor: '#1a5f8a',
-          borderWidth: 2,
-          fill: true,
-          backgroundColor: grad,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          pointBackgroundColor: '#1a5f8a',
-          tension: 0.3
-        },
-        {
-          label: 'MSCI ACWI',
-          data: bmDisplay,
-          borderColor: '#c9a84c',
-          borderWidth: 1.5,
-          fill: false,
-          borderDash: [5, 3],
-          pointRadius: 0,
-          tension: 0.3
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: '#5a7a94', font: { family: 'DM Mono', size: 10 }, boxWidth: 18 } },
-        tooltip: {
-          backgroundColor: '#0d2d45', borderColor: '#4a7fa5', borderWidth: 1,
-          titleColor: '#5a7a94', bodyColor: '#d8e8f2',
-          titleFont: { family: 'DM Mono', size: 10 }, bodyFont: { family: 'DM Mono', size: 11 },
-          callbacks: {
-            label: c => isDollar
-              ? ` ${c.dataset.label}: $${Math.round(c.raw).toLocaleString()}`
-              : ` ${c.dataset.label}: ${c.raw >= 0 ? '+' : ''}${c.raw.toFixed(2)}%`
-          }
-        }
-      },
-      scales: {
-        x: { grid: { color: '#d0dce8', drawBorder: false }, ticks: { color: '#5a7a94', font: { family: 'DM Mono', size: 9 }, maxTicksLimit: 8 } },
-        y: {
-          grid: { color: '#d0dce8', drawBorder: false },
-          ticks: {
-            color: '#5a7a94',
-            font: { family: 'DM Mono', size: 10 },
-            callback: v => isDollar ? '$' + (v / 1000).toFixed(0) + 'k' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%'
-          }
-        }
-      }
-    }
-  });
-}
-
-// Fetch historical candles from Finnhub
-async function fhCandles(symbol, from, to, resolution) {
-  const url = `https://finnhub.io/api/v1/stock/candle?symbol=${encodeURIComponent(symbol)}&resolution=${resolution}&from=${from}&to=${to}&token=${FH_KEY}`;
-  console.log(`[LWP] Fetching candles: ${symbol} res=${resolution}`);
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Finnhub HTTP ${r.status} for ${symbol}`);
-  const d = await r.json();
-  console.log(`[LWP] Candle response for ${symbol}: s=${d.s}, points=${d.c ? d.c.length : 0}`);
-  if (d.s !== 'ok' || !d.c || d.c.length === 0) throw new Error('No candle data for ' + symbol);
-  return { timestamps: d.t, closes: d.c };
-}
-
-// Yahoo Finance candle fallback via CORS proxy
-async function yahooCandles(symbol, range) {
-  // range map: ytd→ytd, 1y→1y, 2y→2y, 3y→5y (Yahoo doesn't have 3y), 5y→5y
+// Fetch Yahoo Finance data via CORS proxy — returns { startPrice, endPrice } for a range
+async function yahooReturn(symbol, range) {
   const yRange = { ytd:'ytd', '1y':'1y', '2y':'2y', '3y':'5y', '5y':'5y' }[range] || '1y';
-  const interval = ['2y','3y','5y'].includes(range) ? '1wk' : '1d';
-  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${interval}`;
+  const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=1mo`;
   const proxies = [
-    { url: `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`, wrapped: false },
-    { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl)}`, wrapped: false }
+    `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl)}`
   ];
-  for (const proxy of proxies) {
+  for (const proxyUrl of proxies) {
     try {
-      console.log(`[LWP] Yahoo fallback for ${symbol} via ${proxy.url.includes('codetabs') ? 'codetabs' : 'corsproxy'}`);
-      const r = await fetch(proxy.url);
+      const r = await fetch(proxyUrl);
       if (!r.ok) continue;
       const raw = await r.json();
       const data = raw.contents ? JSON.parse(raw.contents) : raw;
       const result = data.chart.result[0];
-      const ts = result.timestamp;
-      const closes = result.indicators.quote[0].close;
-      // Filter out nulls
-      const valid = ts.map((t, i) => ({ t, c: closes[i] })).filter(x => x.c != null);
-      if (valid.length < 2) continue;
-      console.log(`[LWP] Yahoo got ${valid.length} points for ${symbol}`);
-      return { timestamps: valid.map(x => x.t), closes: valid.map(x => x.c) };
+      const closes = result.indicators.quote[0].close.filter(v => v != null);
+      if (closes.length < 2) continue;
+      const startPrice = closes[0];
+      const endPrice = closes[closes.length - 1];
+      return { startPrice, endPrice };
     } catch(e) {
-      console.warn(`[LWP] Yahoo proxy failed for ${symbol}:`, e.message);
+      console.warn(`[LWP] Yahoo return fetch failed for ${symbol} (${range}):`, e.message);
     }
   }
-  throw new Error('All sources failed for ' + symbol);
+  return null;
 }
 
-// Try Yahoo first (more reliable for mutual funds + ETFs), Finnhub as fallback
-async function getCandles(symbol, from, to, resolution, range) {
-  try {
-    return await yahooCandles(symbol, range);
-  } catch(e) {
-    console.warn(`[LWP] Yahoo failed for ${symbol}, trying Finnhub:`, e.message);
-    try {
-      return await fhCandles(symbol, from, to, resolution);
-    } catch(e2) {
-      throw new Error(`No data for ${symbol} from any source`);
-    }
+// Compute annualized return from start/end prices and years
+function annualizedReturn(startPrice, endPrice, years) {
+  if (!startPrice || startPrice <= 0 || !endPrice) return null;
+  if (years <= 0) return null;
+  if (years <= 1) {
+    // For periods <= 1 year, just show total return (not annualized)
+    return ((endPrice / startPrice) - 1) * 100;
   }
+  return (Math.pow(endPrice / startPrice, 1 / years) - 1) * 100;
 }
 
-// Get date range timestamps
-function getRange(range) {
-  const now = Math.floor(Date.now() / 1000);
-  const d = new Date();
-  let from;
+// Get years for each period
+function rangeYears(range) {
   switch(range) {
-    case 'ytd': from = Math.floor(new Date(d.getFullYear(), 0, 1).getTime() / 1000); break;
-    case '1y':  from = now - 365 * 86400; break;
-    case '2y':  from = now - 730 * 86400; break;
-    case '3y':  from = now - 1095 * 86400; break;
-    case '5y':  from = now - 1825 * 86400; break;
-    default:    from = now - 365 * 86400;
+    case 'ytd': {
+      const now = new Date();
+      const jan1 = new Date(now.getFullYear(), 0, 1);
+      return (now - jan1) / (365.25 * 86400000);
+    }
+    case '1y': return 1;
+    case '2y': return 2;
+    case '3y': return 3;
+    case '5y': return 5;
+    default: return 1;
   }
-  return { from, to: now };
 }
 
-// Build the chart from uploaded holdings
-async function loadPerfChart(rows, range) {
-  const placeholder = document.getElementById('perf-placeholder');
-  placeholder.style.display = 'block';
-  placeholder.textContent = 'Loading historical data…';
-  document.getElementById('perfChart').style.display = 'none';
+// Format a return value as colored HTML
+function fmtReturn(val) {
+  if (val == null) return '<span style="color:var(--muted)">—</span>';
+  const cls = val > 0 ? 'pos' : val < 0 ? 'neg' : '';
+  return `<span class="${cls}">${val > 0 ? '+' : ''}${val.toFixed(1)}%</span>`;
+}
 
-  const { from, to } = getRange(range);
-  const resolution = ['2y','3y','5y'].includes(range) ? 'W' : 'D';
+// Update a single row in the perf table
+function updatePerfRow(rowIdx, cells) {
+  const tbody = document.getElementById('perf-tbody');
+  const tr = tbody.rows[rowIdx];
+  if (!tr) return;
+  // cells = { ytd, y1, y2, y3, y5 } — each is a number or null
+  tr.cells[1].innerHTML = fmtReturn(cells.ytd);
+  tr.cells[2].innerHTML = fmtReturn(cells.y1);
+  tr.cells[3].innerHTML = fmtReturn(cells.y2);
+  tr.cells[4].innerHTML = fmtReturn(cells.y3);
+  tr.cells[5].innerHTML = fmtReturn(cells.y5);
+}
 
-  try {
-    // Fetch ACWI benchmark — try Finnhub then Yahoo
-    let bmCandles;
-    try {
-      bmCandles = await getCandles('ACWI', from, to, resolution, range);
-    } catch(e) {
-      console.warn('[LWP] ACWI failed, trying URTH:', e.message);
-      bmCandles = await getCandles('URTH', from, to, resolution, range);
+// Fetch benchmark returns for a given ticker across all periods
+async function fetchBenchmarkReturns(symbol) {
+  const ranges = ['ytd', '1y', '2y', '3y', '5y'];
+  const results = {};
+  for (const range of ranges) {
+    const ret = await yahooReturn(symbol, range);
+    if (ret) {
+      const years = rangeYears(range);
+      results[range] = annualizedReturn(ret.startPrice, ret.endPrice, years);
+    } else {
+      results[range] = null;
     }
+    await new Promise(r => setTimeout(r, 200)); // rate limit
+  }
+  return { ytd: results.ytd, y1: results['1y'], y2: results['2y'], y3: results['3y'], y5: results['5y'] };
+}
 
-    // Fetch candles for each unique ticker
-    const tickers = [...new Set(rows.map(r => r.ticker))];
-    const tickerCandles = {};
-    const failedTickers = [];
+// Load all benchmarks on page load
+async function loadBenchmarks() {
+  const benchmarks = [
+    { symbol: 'ACWI', rowIdx: 1 },
+    { symbol: 'SPY',  rowIdx: 2 },
+    // 60/40 computed from SPY + AGG
+    { symbol: 'AGG',  rowIdx: 4 },
+  ];
 
-    placeholder.textContent = `Loading historical data… (0/${tickers.length} tickers)`;
+  let spyReturns = null, aggReturns = null;
 
-    for (let i = 0; i < tickers.length; i++) {
-      const ticker = tickers[i];
-      placeholder.textContent = `Loading historical data… (${i+1}/${tickers.length}: ${ticker})`;
-      try {
-        tickerCandles[ticker] = await getCandles(ticker, from, to, resolution, range);
-      } catch(e) {
-        console.warn(`[LWP] No candles for ${ticker}:`, e.message);
-        failedTickers.push(ticker);
+  for (const bm of benchmarks) {
+    try {
+      console.log(`[LWP] Fetching benchmark: ${bm.symbol}`);
+      const ret = await fetchBenchmarkReturns(bm.symbol);
+      updatePerfRow(bm.rowIdx, ret);
+      if (bm.symbol === 'SPY') spyReturns = ret;
+      if (bm.symbol === 'AGG') aggReturns = ret;
+    } catch(e) {
+      console.warn(`[LWP] Benchmark fetch failed for ${bm.symbol}:`, e.message);
+      updatePerfRow(bm.rowIdx, { ytd: null, y1: null, y2: null, y3: null, y5: null });
+    }
+  }
+
+  // Compute 60/40 blend from SPY and AGG
+  if (spyReturns && aggReturns) {
+    const blend = {};
+    for (const k of ['ytd', 'y1', 'y2', 'y3', 'y5']) {
+      if (spyReturns[k] != null && aggReturns[k] != null) {
+        blend[k] = spyReturns[k] * 0.6 + aggReturns[k] * 0.4;
+      } else {
+        blend[k] = null;
       }
-      // Rate limit delay
+    }
+    updatePerfRow(3, blend);
+  }
+
+  document.getElementById('perf-note').textContent = 'Benchmark returns are annualized (except YTD & 1Y which are total return). Data via Yahoo Finance.';
+}
+
+// Calculate LWP Portfolio returns from uploaded holdings
+async function loadPortfolioReturns(rows) {
+  document.getElementById('perf-badge').textContent = 'LOADING…';
+  const tickers = [...new Set(rows.map(r => r.ticker))];
+  const totalValue = rows.reduce((s, r) => s + r.value, 0);
+  if (totalValue <= 0) return;
+
+  // Calculate weight for each ticker
+  const weights = {};
+  rows.forEach(r => {
+    weights[r.ticker] = (weights[r.ticker] || 0) + r.value;
+  });
+  Object.keys(weights).forEach(k => { weights[k] /= totalValue; });
+
+  const ranges = ['ytd', '1y', '2y', '3y', '5y'];
+  const portfolioReturns = { ytd: 0, y1: 0, y2: 0, y3: 0, y5: 0 };
+  const rangeKeys = { ytd: 'ytd', '1y': 'y1', '2y': 'y2', '3y': 'y3', '5y': 'y5' };
+  const coveredWeight = { ytd: 0, y1: 0, y2: 0, y3: 0, y5: 0 };
+
+  for (const ticker of tickers) {
+    console.log(`[LWP] Portfolio history: ${ticker} (weight: ${(weights[ticker]*100).toFixed(1)}%)`);
+    for (const range of ranges) {
+      const ret = await yahooReturn(ticker, range);
+      if (ret) {
+        const years = rangeYears(range);
+        const annRet = annualizedReturn(ret.startPrice, ret.endPrice, years);
+        if (annRet != null) {
+          const key = rangeKeys[range];
+          portfolioReturns[key] += annRet * weights[ticker];
+          coveredWeight[key] += weights[ticker];
+        }
+      }
       await new Promise(r => setTimeout(r, 150));
     }
-
-    // Use benchmark timestamps as the common date axis
-    const dates = bmCandles.timestamps;
-    const labels = dates.map(t => {
-      const d = new Date(t * 1000);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
-    });
-
-    // For each date, calculate portfolio value using historical prices
-    const portValues = dates.map((ts, di) => {
-      let total = 0;
-      for (const row of rows) {
-        const candles = tickerCandles[row.ticker];
-        if (!candles) {
-          total += row.qty * row.price;
-          continue;
-        }
-        let closePrice = row.price;
-        for (let j = candles.timestamps.length - 1; j >= 0; j--) {
-          if (candles.timestamps[j] <= ts) {
-            closePrice = candles.closes[j];
-            break;
-          }
-        }
-        total += row.qty * closePrice;
-      }
-      return total;
-    });
-
-    // Scale ACWI to start at same value as portfolio for dollar mode
-    const portStart = portValues[0];
-    const bmStart = bmCandles.closes[0];
-    const bmScaled = bmCandles.closes.map(v => (v / bmStart) * portStart);
-
-    perfData = { labels, portfolio: portValues, benchmark: bmScaled };
-    buildPerfChart(labels, portValues, bmScaled);
-
-    if (failedTickers.length > 0) {
-      console.warn('[LWP] Chart: no history for:', failedTickers.join(', '), '(used upload price as constant)');
-    }
-  } catch(e) {
-    console.error('[LWP] Chart load failed:', e);
-    placeholder.textContent = 'Could not load chart: ' + e.message;
-    placeholder.style.display = 'block';
-    document.getElementById('perfChart').style.display = 'none';
   }
+
+  // Scale up if some tickers had no data (assume they performed at portfolio average)
+  const final = {};
+  for (const k of ['ytd', 'y1', 'y2', 'y3', 'y5']) {
+    if (coveredWeight[k] > 0.3) {
+      // Extrapolate: if we covered 80% of the portfolio, scale up the return
+      final[k] = portfolioReturns[k] / coveredWeight[k];
+    } else {
+      final[k] = null; // not enough data
+    }
+  }
+
+  updatePerfRow(0, final);
+  document.getElementById('perf-badge').textContent = 'LIVE DATA';
+  document.getElementById('perf-note').textContent =
+    `LWP Portfolio: weighted return across ${tickers.length} holdings (${(Math.max(...Object.values(coveredWeight))*100).toFixed(0)}% coverage). Benchmarks annualized via Yahoo Finance.`;
 }
 
-// Tab click handlers
-document.querySelectorAll('#perf-tabs .tab').forEach(t => {
-  t.addEventListener('click', () => {
-    document.querySelectorAll('#perf-tabs .tab').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    perfRange = t.dataset.range;
-    if (uploadedRows) loadPerfChart(uploadedRows, perfRange);
-  });
-});
-
-// Toggle dollar/percent
-document.getElementById('perf-toggle').addEventListener('click', () => {
-  perfMode = perfMode === 'dollar' ? 'pct' : 'dollar';
-  document.getElementById('perf-toggle').textContent = perfMode === 'dollar' ? '$' : '%';
-  if (perfData) {
-    buildPerfChart(perfData.labels, perfData.portfolio, perfData.benchmark);
-  }
-});
+// Start loading benchmarks immediately
+loadBenchmarks();
 
 // ── OLD CHART TABS REMOVED ──
 
@@ -1156,76 +1045,6 @@ holdings.forEach(h=>{
     <td><span class="rs ${rs.cls}" style="cursor:pointer" onclick="window.open('${dwLink(h.s)}','_blank')" title="View ${h.s} on Nasdaq Dorsey Wright">${rs.l}</span></td>
   </tr>`;
 });
-
-// ── BENCHMARK COMPARISON ──────────────────────────────────────────────────
-const BM_KEY = 'lwp_benchmarks';
-const BM_DEFAULT = [
-  { label:'LWP Portfolio',      ytd: 4.2,  y1: 11.8, y3: 8.4,  port: true  },
-  { label:'S&P 500 (SPX)',       ytd: 3.1,  y1: 23.3, y3: 10.2, port: false },
-  { label:'60/40 Blend',        ytd: 2.4,  y1: 14.1, y3: 6.8,  port: false },
-  { label:'MSCI World (URTH)',  ytd: 2.8,  y1: 19.4, y3: 8.6,  port: false },
-  { label:'Barclays Agg (AGG)', ytd: 0.6,  y1:  3.2, y3: -1.1, port: false },
-];
-
-let bmData = JSON.parse(localStorage.getItem(BM_KEY) || 'null') || BM_DEFAULT;
-let bmEditMode = false;
-
-function renderBm() {
-  const tbody = document.getElementById('bm-tbody');
-  tbody.innerHTML = '';
-  bmData.forEach((row, ri) => {
-    const fmtCell = (v, editing) => {
-      const cls = v > 0 ? 'pos' : v < 0 ? 'neg' : '';
-      if (editing) return `<input class="bm-input" data-ri="${ri}" data-field="ytd" value="${v}" style="width:52px" onchange="bmUpdate(${ri},'${['ytd','y1','y3'][['ytd','y1','y3'].indexOf(arguments[1])]}',this.value)">`;
-      return `<span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(1)}%</span>`;
-    };
-    tbody.innerHTML += `<tr class="${row.port ? 'portfolio-row' : ''}">
-      <td>${row.port ? '▶ ' : ''}${bmEditMode ? `<input class="bm-input" style="width:120px" value="${row.label}" onchange="bmUpdateLabel(${ri},this.value)">` : row.label}</td>
-      <td>${bmEditMode
-        ? `<input class="bm-input" data-ri="${ri}" value="${row.ytd}" onchange="bmUpdate(${ri},'ytd',this.value)">`
-        : `<span class="${row.ytd>0?'pos':row.ytd<0?'neg':''}">${row.ytd>0?'+':''}${row.ytd.toFixed(1)}%</span>`}
-      </td>
-      <td>${bmEditMode
-        ? `<input class="bm-input" data-ri="${ri}" value="${row.y1}" onchange="bmUpdate(${ri},'y1',this.value)">`
-        : `<span class="${row.y1>0?'pos':row.y1<0?'neg':''}">${row.y1>0?'+':''}${row.y1.toFixed(1)}%</span>`}
-      </td>
-      <td>${bmEditMode
-        ? `<input class="bm-input" data-ri="${ri}" value="${row.y3}" onchange="bmUpdate(${ri},'y3',this.value)">`
-        : `<span class="${row.y3>0?'pos':row.y3<0?'neg':''}">${row.y3>0?'+':''}${row.y3.toFixed(1)}%</span>`}
-      </td>
-    </tr>`;
-  });
-  document.getElementById('bm-note').innerHTML = bmEditMode
-    ? '<span style="color:var(--blue)">Editing — changes auto-save. Click ✎ done when finished.</span>'
-    : 'Returns are price-based · <strong style="color:var(--blue)">▶ LWP Portfolio</strong> row updates when file is uploaded · Click <strong style="color:var(--blue)">✎ edit</strong> to update figures.';
-}
-
-function bmUpdate(ri, field, val) {
-  const n = parseFloat(val);
-  if (!isNaN(n)) { bmData[ri][field] = n; localStorage.setItem(BM_KEY, JSON.stringify(bmData)); renderBm(); }
-}
-function bmUpdateLabel(ri, val) {
-  if (val.trim()) { bmData[ri].label = val.trim(); localStorage.setItem(BM_KEY, JSON.stringify(bmData)); }
-}
-function toggleBmEdit() {
-  bmEditMode = !bmEditMode;
-  document.getElementById('bm-edit-btn').textContent = bmEditMode ? '✔ done' : '✎ edit';
-  renderBm();
-}
-
-// Call when real portfolio data is loaded — update the LWP row's YTD from upload metadata if present
-function updateBmPortfolioRow(ytd, y1, y3) {
-  const portRow = bmData.find(r => r.port);
-  if (portRow) {
-    if (ytd != null) portRow.ytd = ytd;
-    if (y1  != null) portRow.y1  = y1;
-    if (y3  != null) portRow.y3  = y3;
-    localStorage.setItem(BM_KEY, JSON.stringify(bmData));
-    renderBm();
-  }
-}
-
-renderBm();
 
 // ── DORSEY WRIGHT LINK ── opens security page in new tab (requires NDW subscription)
 function dwLink(ticker) {
@@ -1462,9 +1281,8 @@ function handleFile(file) {
       const positions = parseFile(buf, file.name);
       const rows = positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs }));
       refreshDashboard(rows);
-      // Store rows for chart tab switching and trigger chart load
-      uploadedRows = rows;
-      loadPerfChart(rows, perfRange);
+      // Load portfolio returns into the performance panel
+      loadPortfolioReturns(rows);
     } catch(err) {
       showStatus('\u2715 ' + err.message, 'error');
       console.error(err);
