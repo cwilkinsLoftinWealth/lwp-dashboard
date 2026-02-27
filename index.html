@@ -112,7 +112,7 @@
     padding:22px 32px;
     display:grid;
     grid-template-columns:1fr 1fr 1fr 340px;
-    grid-template-rows:auto auto auto auto;
+    grid-template-rows:auto auto auto auto auto auto;
     gap:16px;
   }
 
@@ -219,7 +219,7 @@
   canvas { width:100% !important; }
 
   /* ── SIDEBAR ── */
-  .sidebar { grid-column:4; grid-row:1/5; display:flex; flex-direction:column; gap:16px; }
+  .sidebar { grid-column:4; grid-row:1/7; display:flex; flex-direction:column; gap:16px; }
 
   /* ── 5-QUADRANT ── */
   .q-row {
@@ -252,7 +252,7 @@
   .w-chg  { font-family:'DM Mono',monospace; font-size:13px; }
 
   /* ── HOLDINGS TABLE ── */
-  .holdings-section { grid-column:1/4; grid-row:3; }
+  .holdings-section { grid-column:1/4; grid-row:4; }
   table { width:100%; border-collapse:collapse; }
   thead th {
     font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--muted);
@@ -277,7 +277,42 @@
   .rs-sell { background:#fde0e3; color:#8a1a24; border:1px solid #f0a0a8; }
 
   /* ── NEWS ── */
-  .news-section { grid-column:1/4; grid-row:4; }
+  /* ── ESTIMATED INCOME & EXPENSES ── */
+  .income-section  { grid-column:1/3; grid-row:5; }
+  .expense-section { grid-column:3/4; grid-row:5; }
+  .income-table, .expense-table { width:100%; border-collapse:collapse; margin-top:10px; }
+  .income-table th, .expense-table th {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:700; letter-spacing:1px;
+    color:var(--muted); text-transform:uppercase; text-align:right; padding:4px 7px;
+    border-bottom:2px solid var(--border);
+  }
+  .income-table th:first-child, .expense-table th:first-child { text-align:left; }
+  .income-table td, .expense-table td {
+    font-family:'DM Mono',monospace; font-size:12px; padding:7px 7px;
+    border-bottom:1px solid var(--border); text-align:right; color:var(--text);
+  }
+  .income-table td:first-child, .expense-table td:first-child { text-align:left; font-weight:600; }
+  .income-table tr:last-child td, .expense-table tr:last-child td { border-bottom:none; }
+  .ie-summary {
+    display:flex; gap:16px; padding:14px 0 8px; border-bottom:1px solid var(--border); margin-bottom:4px;
+  }
+  .ie-summary-item { flex:1; text-align:center; }
+  .ie-summary-label {
+    font-family:'DM Mono',monospace; font-size:10px; font-weight:700;
+    letter-spacing:1.5px; color:var(--muted); text-transform:uppercase; margin-bottom:4px;
+  }
+  .ie-summary-value {
+    font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:600; line-height:1;
+  }
+  .ie-summary-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-top:4px; }
+  .ie-total-row td { font-weight:800 !important; border-top:2px solid var(--border) !important; }
+
+  body.presenting .income-section  { grid-column:1; grid-row:auto; }
+  body.presenting .expense-section { grid-column:2; grid-row:auto; }
+  body.presenting .ie-summary-value { font-size:36px; }
+  body.presenting .income-table td, body.presenting .expense-table td { font-size:14px; padding:9px 7px; }
+  body.presenting .income-table th, body.presenting .expense-table th { font-size:12px; }
+  .news-section { grid-column:1/4; grid-row:6; }
   .news-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:6px; }
   .news-item { padding:14px; background:var(--surface); border:1px solid var(--border); border-radius:6px; cursor:pointer; transition:all .2s; box-shadow:0 1px 3px rgba(13,51,73,.06); }
   .news-item:hover { border-color:var(--steel); background:var(--surface2); }
@@ -349,6 +384,50 @@
     color: var(--muted); text-align: right; margin-top: 8px;
     display: none;
   }
+  /* ── DISCLAIMERS ── */
+  .disclaimer-inline {
+    font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+    line-height:1.6; margin-top:8px; padding-top:7px;
+    border-top:1px solid var(--border); letter-spacing:.2px;
+  }
+  .disclaimer-footer {
+    margin:24px 32px 32px; padding:20px 24px;
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    font-family:'DM Mono',monospace; font-size:10px; color:var(--muted);
+    line-height:1.8; letter-spacing:.2px; position:relative; z-index:1;
+  }
+  .disclaimer-footer strong { color:var(--text); font-weight:700; }
+  body.presenting .disclaimer-footer {
+    font-size:11px; margin:20px 32px 28px;
+    border:2px solid var(--border);
+  }
+  body.presenting .disclaimer-inline { font-size:11px; }
+
+  /* ── MOMENTUM LEADERS & POSITIONS TO WATCH ── */
+  .leaders-section { grid-column:1/3; grid-row:3; }
+  .watch-section   { grid-column:3/4; grid-row:3; }
+  .lw-item {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 0; border-bottom:1px solid var(--border);
+  }
+  .lw-item:last-child { border-bottom:none; }
+  .lw-left { display:flex; align-items:center; gap:12px; }
+  .lw-rank {
+    width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'DM Mono',monospace; font-size:13px; font-weight:800; flex-shrink:0;
+  }
+  .lw-ticker { font-size:15px; font-weight:700; color:var(--text); }
+  .lw-quad { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
+  .lw-right { display:flex; align-items:center; gap:10px; }
+  .lw-val { font-family:'DM Mono',monospace; font-size:13px; color:var(--muted); text-align:right; }
+
+  body.presenting .leaders-section { grid-column:1; grid-row:auto; }
+  body.presenting .watch-section   { grid-column:2; grid-row:auto; }
+  body.presenting .lw-ticker { font-size:18px; }
+  body.presenting .lw-rank { width:34px; height:34px; font-size:15px; }
+  body.presenting .lw-val { font-size:15px; }
+  body.presenting .rs { font-size:14px; }
+
   /* ── PRESENTATION MODE ── */
   .present-toggle {
     padding:7px 18px; font-family:'DM Mono',monospace; font-size:12px;
@@ -547,12 +626,14 @@
       </tbody>
     </table>
     <div class="perf-note" id="perf-note">Benchmark returns based on prior trading day close. Upload holdings file to populate LWP Portfolio row.</div>
+    <div class="disclaimer-inline">Past performance is not indicative of future results. Benchmark comparisons are provided for illustrative purposes only and do not represent actual client returns net of fees, expenses, or taxes.</div>
   </div>
 
   <!-- FIVE QUADRANT HERO (presentation mode only) -->
   <div class="card quadrant-hero" id="quadrant-hero">
     <div class="card-label">Five Quadrant Allocation Model <span class="badge b-gold">YOUR PORTFOLIO</span></div>
     <div class="q-grid" id="q-hero-grid"></div>
+    <div class="disclaimer-inline">Target allocation ranges are based on the client's investment policy and risk profile. Actual allocations will vary with market conditions. Rebalancing may trigger taxable events.</div>
   </div>
 
   <!-- SIDEBAR -->
@@ -571,9 +652,9 @@
       <div class="csv-format-hint">
         <strong>Required columns:</strong><br>
         Ticker &nbsp;·&nbsp; Quadrant &nbsp;·&nbsp; Quantity &nbsp;·&nbsp; Price<br>
-        <strong>Optional:</strong> RS Score (0–6)<br>
-        <strong>Performance rows (below holdings):</strong><br>
-        LWP YTD &nbsp;·&nbsp; LWP 1Y &nbsp;·&nbsp; LWP 3Y &nbsp;·&nbsp; LWP 5Y
+        <strong>Optional:</strong> RS Score · Div Yield % · Expense Ratio %<br>
+        <span style="color:var(--green)">✦</span> Div yields &amp; expense ratios auto-fetched from Yahoo Finance if not in file<br>
+        <strong>2nd sheet "Performance":</strong> Client name · YTD · 1Y · 3Y · 5Y
       </div>
       <div class="last-updated" id="last-updated"></div>
     </div>
@@ -581,12 +662,25 @@
     <div class="card">
       <div class="card-label">Five Quadrant Model <span class="badge b-gold">MOD. AGG.</span></div>
       <div id="quadrant-list"></div>
+      <div class="disclaimer-inline">Target ranges reflect client risk profile. Actual allocations vary with market movement.</div>
     </div>
     <!-- Watchlist -->
     <div class="card" style="flex:1">
       <div class="card-label">Watchlist <span class="badge b-muted">5 TRACKED</span></div>
       <div id="watchlist"></div>
     </div>
+  </div>
+
+  <!-- MOMENTUM LEADERS & POSITIONS TO WATCH -->
+  <div class="card leaders-section" id="leaders-section" style="display:none">
+    <div class="card-label">Momentum Leaders <span class="badge b-green" id="leaders-badge">TOP RS</span></div>
+    <div id="leaders-list"></div>
+    <div class="disclaimer-inline">Rankings based on Nasdaq Dorsey Wright relative strength scores. RS scores reflect technical momentum only and are not a recommendation to buy or hold any security.</div>
+  </div>
+  <div class="card watch-section" id="watch-section" style="display:none">
+    <div class="card-label">Positions to Watch <span class="badge b-gold" id="watch-badge">REVIEW</span></div>
+    <div id="watch-list"></div>
+    <div class="disclaimer-inline">Positions listed here have lower relative strength scores and may warrant review. Inclusion does not constitute a recommendation to sell.</div>
   </div>
 
   <!-- HOLDINGS -->
@@ -600,12 +694,50 @@
     </table>
   </div>
 
-  <!-- NEWS -->
+  <!-- ESTIMATED INCOME & PORTFOLIO EXPENSES -->
+  <div class="card income-section" id="income-section" style="display:none">
+    <div class="card-label">Estimated Annual Income <span class="badge b-green" id="income-badge">DIVIDENDS</span></div>
+    <div id="income-summary"></div>
+    <table class="income-table" id="income-table">
+      <thead><tr>
+        <th style="text-align:left">Asset</th><th>Quadrant</th><th>Yield</th><th>Value</th><th>Est. Income</th>
+      </tr></thead>
+      <tbody id="income-tbody"></tbody>
+    </table>
+    <div class="disclaimer-inline">Estimated income based on current dividend yields and portfolio values. Yields sourced from Yahoo Finance when not provided in the uploaded file. Actual dividends may vary and are not guaranteed.</div>
+  </div>
+  <div class="card expense-section" id="expense-section" style="display:none">
+    <div class="card-label">Portfolio Expenses <span class="badge b-gold" id="expense-badge">EXPENSE RATIOS</span></div>
+    <div id="expense-summary"></div>
+    <table class="expense-table" id="expense-table">
+      <thead><tr>
+        <th style="text-align:left">Asset</th><th>Quadrant</th><th>Exp. Ratio</th><th>Value</th><th>Annual Cost</th>
+      </tr></thead>
+      <tbody id="expense-tbody"></tbody>
+    </table>
+    <div class="disclaimer-inline">Expense ratios sourced from Yahoo Finance when not provided in the uploaded file. Ratios are as reported by the fund and subject to change. Does not include transaction costs, advisory fees, or other charges.</div>
+  </div>
   <div class="card news-section">
     <div class="card-label">Market Intelligence <span class="badge b-gold">6 STORIES</span></div>
     <div class="news-grid" id="news-grid"></div>
   </div>
 
+</div>
+
+<!-- DISCLAIMER FOOTER -->
+<div class="disclaimer-footer" id="disclaimer-footer">
+  <strong>IMPORTANT DISCLOSURES — LOFTIN WEALTH PARTNERS</strong><br><br>
+  This dashboard is provided for informational purposes only and does not constitute investment advice, a solicitation, or a recommendation to buy or sell any security. All information presented is believed to be accurate but is not guaranteed. Portfolio values, allocations, and performance figures are based on data provided at the time of upload and may not reflect real-time market conditions.<br><br>
+  <strong>Past performance is not indicative of future results.</strong> Investment returns and principal value will fluctuate so that an investor's holdings, when redeemed, may be worth more or less than their original cost. Current performance may be lower or higher than the performance data quoted.<br><br>
+  Relative strength (RS) scores are derived from Nasdaq Dorsey Wright's proprietary technical analysis methodology and reflect historical price momentum. RS scores are one of many factors considered in portfolio management decisions and do not constitute buy, sell, or hold recommendations on their own. The Five Quadrant Model is a proprietary allocation framework developed by Loftin Wealth Partners and is tailored to individual client risk profiles and investment objectives.<br><br>
+  Benchmark index returns (S&P 500, MSCI ACWI, Bloomberg U.S. Aggregate Bond) are provided for comparative purposes only. Index returns reflect price performance based on prior trading day close and do not include dividends, fees, or expenses. You cannot invest directly in an index. The 60/40 Blend is a hypothetical blend of 60% S&P 500 and 40% Bloomberg U.S. Aggregate Bond Index and does not represent an actual portfolio.<br><br>
+  Market indicators including the CBOE Volatility Index (VIX) and the CNN Fear & Greed Index are third-party measures of market sentiment and volatility. These indicators are provided for general informational context and should not be relied upon as the sole basis for any investment decision.<br><br>
+  Loftin Wealth Partners is a registered investment advisor. Registration does not imply a certain level of skill or training. All investing involves risk, including the possible loss of principal. Diversification and asset allocation do not ensure a profit or guarantee against loss. Tax-related information is general in nature and should not be construed as tax advice. Consult a qualified tax professional regarding your specific situation.<br><br>
+  <strong>Data as of prior trading day close unless otherwise noted. Dashboard generated for internal review and client presentation purposes only. Not for public distribution.</strong><br><br>
+  Securities offered through LPL Financial, Member <a href="https://www.finra.org" target="_blank" style="color:var(--blue);text-decoration:none">FINRA</a>/<a href="https://www.sipc.org" target="_blank" style="color:var(--blue);text-decoration:none">SIPC</a>. Investment advice offered through Loftin Wealth Partners, a registered investment advisor and separate entity from LPL Financial.<br><br>
+  *Note these performance figures are manually input as of <span id="disclaimer-date">—</span> intraday pricing and presented as a best efforts report to the client and do not ensure complete accuracy and have not been verified by LPL Financial.<br>
+  **These figures are not a representation of performance.<br>
+  ***The investment return and principal value of an investment will fluctuate; an investor's shares, when redeemed, may be worth more or less than their original cost.
 </div>
 
 <script>
@@ -1268,6 +1400,8 @@ function parseFile(arrayBuffer, filename) {
     if (v.includes('share') || v.includes('qty') || v.includes('quant') || v.includes('unit') || v.includes('held')) return false;
     return v === 'rs' || v.includes('rs score') || v.includes('rs ') || v.startsWith('rs') || v.includes('relative strength') || v.includes('rel strength');
   });
+  const divCol    = h.findIndex(v => (v.includes('div') && (v.includes('yield') || v.includes('yld') || v.includes('%'))) || v === 'yield' || v === 'div yield' || v === 'dividend' || v === 'div');
+  const erCol     = h.findIndex(v => v.includes('expense') || v === 'er' || v === 'exp ratio' || v === 'expense ratio' || v === 'mer');
 
   if (tCol      === -1) throw new Error('Missing "Ticker" column.');
   if (qCol      === -1) throw new Error('Missing "Quadrant" column.');
@@ -1286,10 +1420,14 @@ function parseFile(arrayBuffer, filename) {
     const price   = parseFloat(String(row[priceCol]  || '').replace(/[^0-9.-]/g,''));
     const rsRaw   = rsCol !== -1 ? parseFloat(String(row[rsCol] || '').replace(/[^0-9.-]/g,'')) : NaN;
     const rs      = (!isNaN(rsRaw) && rsRaw >= 0 && rsRaw <= 6) ? rsRaw : null;
+    const divRaw  = divCol !== -1 ? parseFloat(String(row[divCol] || '').replace(/[^0-9.-]/g,'')) : NaN;
+    const divYield = (!isNaN(divRaw) && divRaw >= 0) ? divRaw : null;
+    const erRaw   = erCol !== -1 ? parseFloat(String(row[erCol] || '').replace(/[^0-9.-]/g,'')) : NaN;
+    const expRatio = (!isNaN(erRaw) && erRaw >= 0) ? erRaw : null;
     if (!ticker || ['TOTAL','CASH',''].includes(ticker)) continue;
     if (!qty   || isNaN(qty)   || qty   <= 0) continue;
     if (!price || isNaN(price) || price <= 0) continue;
-    positions.push({ ticker, quad: QUAD_RANGES[quad] ? quad : 'UNKNOWN', qty, price, rawQuad, rs });
+    positions.push({ ticker, quad: QUAD_RANGES[quad] ? quad : 'UNKNOWN', qty, price, rawQuad, rs, divYield, expRatio });
   }
   if (positions.length === 0) throw new Error('No valid data rows found after the header.');
   return { positions, perfRows };
@@ -1353,11 +1491,24 @@ function refreshDashboard(rows) {
   const sorted = [...rows].sort((a,b) =>
     ['Q1','Q2','Q3','Q4','Q5','UNKNOWN'].indexOf(a.quad) - ['Q1','Q2','Q3','Q4','Q5','UNKNOWN'].indexOf(b.quad)
   );
+
+  // Compute average RS per quadrant
+  const quadRS = {};
+  sorted.forEach(h => {
+    if (!quadRS[h.quad]) quadRS[h.quad] = { sum:0, count:0 };
+    if (h.rs != null && h.rs >= 0) { quadRS[h.quad].sum += h.rs; quadRS[h.quad].count++; }
+  });
+
   let lastQ = null;
   sorted.forEach(h => {
     const qc = (qMeta[h.quad]||qMeta.UNKNOWN).c;
     if (h.quad !== lastQ) {
-      tb.innerHTML += `<tr style="background:${qc}18"><td colspan="8" style="padding:5px 8px 4px;font-size:12px;font-weight:800;letter-spacing:2px;color:${qc};text-transform:uppercase;border-bottom:2px solid ${qc}60">${(qMeta[h.quad]||qMeta.UNKNOWN).label}</td></tr>`;
+      const qr = quadRS[h.quad];
+      const avgRS = (qr && qr.count > 0) ? (qr.sum / qr.count) : null;
+      const avgRSDisplay = avgRS !== null
+        ? `<span style="float:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.5px">Avg RS: <span class="rs ${rsInfo(avgRS).cls}" style="font-size:12px;padding:3px 8px;border-radius:3px;font-weight:700;margin-left:4px">${avgRS.toFixed(1)} — ${rsInfo(avgRS).l}</span></span>`
+        : '';
+      tb.innerHTML += `<tr style="background:${qc}18"><td colspan="8" style="padding:5px 8px 4px;font-size:12px;font-weight:800;letter-spacing:2px;color:${qc};text-transform:uppercase;border-bottom:2px solid ${qc}60">${(qMeta[h.quad]||qMeta.UNKNOWN).label}${avgRSDisplay}</td></tr>`;
       lastQ = h.quad;
     }
     const pct   = ((h.value/totalValue)*100).toFixed(1)+'%';
@@ -1381,6 +1532,54 @@ function refreshDashboard(rows) {
 
   document.querySelector('.holdings-section .card-label .badge').textContent =
     rows.length + ' POSITIONS \u00b7 5 QUADRANTS';
+
+  // ── Momentum Leaders & Positions to Watch ──
+  const withRS = rows.filter(r => r.rs != null && r.rs >= 0).sort((a,b) => b.rs - a.rs);
+  const leadersEl = document.getElementById('leaders-section');
+  const watchEl = document.getElementById('watch-section');
+
+  if (withRS.length >= 3) {
+    const leaders = withRS.slice(0, 3);
+    const watchItems = [...withRS].reverse().slice(0, 3);
+
+    function renderLWList(items, containerId, isLeader) {
+      const el = document.getElementById(containerId);
+      el.innerHTML = '';
+      items.forEach((h, i) => {
+        const qc = (qMeta[h.quad]||qMeta.UNKNOWN).c;
+        const ri = rsInfo(h.rs);
+        const pct = ((h.value/totalValue)*100).toFixed(1);
+        const rankBg = isLeader ? '#d4f0e4' : '#fef6d8';
+        const rankColor = isLeader ? '#147040' : '#7a5a00';
+        el.innerHTML += `<div class="lw-item">
+          <div class="lw-left">
+            <div class="lw-rank" style="background:${rankBg};color:${rankColor}">${i+1}</div>
+            <div>
+              <div class="lw-ticker">${h.ticker}</div>
+              <div class="lw-quad" style="color:${qc}">${(qMeta[h.quad]||qMeta.UNKNOWN).label}</div>
+            </div>
+          </div>
+          <div class="lw-right">
+            <div class="lw-val">${pct}%<br><span style="font-size:11px">of portfolio</span></div>
+            <span class="rs ${ri.cls}" style="font-size:13px;padding:4px 10px;border-radius:3px;font-weight:700;cursor:pointer" onclick="window.open('${dwLink(h.ticker)}','_blank')" title="View on Dorsey Wright">${h.rs % 1 === 0 ? h.rs.toFixed(0) : h.rs.toFixed(1)} — ${ri.l}</span>
+          </div>
+        </div>`;
+      });
+    }
+
+    renderLWList(leaders, 'leaders-list', true);
+    renderLWList(watchItems, 'watch-list', false);
+    leadersEl.style.display = '';
+    watchEl.style.display = '';
+    document.getElementById('leaders-badge').textContent = `TOP ${leaders.length}`;
+    document.getElementById('watch-badge').textContent = `LOWEST ${watchItems.length}`;
+  } else {
+    leadersEl.style.display = 'none';
+    watchEl.style.display = 'none';
+  }
+
+  // ── Estimated Income & Portfolio Expenses (initial render from Excel data) ──
+  renderIncomeExpense(rows);
 
   const lu = document.getElementById('last-updated');
   lu.textContent = '\u2191 Updated ' + new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
@@ -1409,6 +1608,193 @@ function clearUpload() {
 }
 
 // ── Main handler — file only, no network calls
+// ── YAHOO FINANCE: Fetch dividend yield & expense ratio per ticker ──
+// Uses quoteSummary endpoint with summaryDetail (div yield) + fundProfile (expense ratio)
+// Excel values take priority if provided; Yahoo fills in the blanks
+async function fetchYahooFundData(ticker) {
+  const yUrl = `https://query1.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}?modules=summaryDetail,fundProfile`;
+  const proxies = [
+    `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl)}`
+  ];
+  for (const proxyUrl of proxies) {
+    try {
+      const r = await fetch(proxyUrl);
+      if (!r.ok) continue;
+      const raw = await r.json();
+      const data = raw.contents ? JSON.parse(raw.contents) : raw;
+      const result = data.quoteSummary?.result?.[0];
+      if (!result) continue;
+
+      // Dividend yield from summaryDetail (as decimal, e.g., 0.0127 = 1.27%)
+      let divYield = null;
+      const sd = result.summaryDetail;
+      if (sd) {
+        const dy = sd.dividendYield?.raw ?? sd.trailingAnnualDividendYield?.raw ?? null;
+        if (dy != null && dy > 0) divYield = dy * 100; // convert to percentage
+      }
+
+      // Expense ratio from fundProfile (as decimal, e.g., 0.0003 = 0.03%)
+      let expRatio = null;
+      const fp = result.fundProfile;
+      if (fp) {
+        const fees = fp.feesExpensesInvestment;
+        const er = fees?.annualReportExpenseRatio?.raw ?? fees?.netExpenseRatio?.raw ?? fees?.totalExpenseRatio?.raw ?? null;
+        if (er != null && er >= 0) expRatio = er * 100; // convert to percentage
+      }
+
+      console.log(`[LWP] Yahoo fund data for ${ticker}: divYield=${divYield?.toFixed(2) ?? 'N/A'}%, expRatio=${expRatio?.toFixed(2) ?? 'N/A'}%`);
+      return { divYield, expRatio };
+    } catch(e) {
+      console.warn(`[LWP] Fund data fetch failed for ${ticker}:`, e.message);
+    }
+  }
+  return { divYield: null, expRatio: null };
+}
+
+// Fetch fund data for all holdings, merge with existing data, re-render panels
+async function enrichWithYahooData(rows) {
+  const tickers = [...new Set(rows.map(r => r.ticker))];
+  const needsDiv = rows.some(r => r.divYield == null);
+  const needsER  = rows.some(r => r.expRatio == null);
+  if (!needsDiv && !needsER) {
+    console.log('[LWP] All div yields and expense ratios from Excel — skipping Yahoo fetch');
+    return;
+  }
+
+  console.log(`[LWP] Fetching fund data for ${tickers.length} tickers from Yahoo Finance...`);
+
+  // Show loading state in panels
+  const incomeSection = document.getElementById('income-section');
+  const expenseSection = document.getElementById('expense-section');
+  if (needsDiv) {
+    incomeSection.style.display = '';
+    document.getElementById('income-summary').innerHTML = '<div class="ie-summary"><div class="ie-summary-item"><div class="ie-summary-label">FETCHING DIVIDEND DATA</div><div class="ie-summary-value" style="color:var(--muted);font-size:16px">Loading from Yahoo Finance\u2026</div></div></div>';
+    document.getElementById('income-tbody').innerHTML = '';
+    document.getElementById('income-badge').textContent = 'LOADING';
+  }
+  if (needsER) {
+    expenseSection.style.display = '';
+    document.getElementById('expense-summary').innerHTML = '<div class="ie-summary"><div class="ie-summary-item"><div class="ie-summary-label">FETCHING EXPENSE DATA</div><div class="ie-summary-value" style="color:var(--muted);font-size:16px">Loading from Yahoo Finance\u2026</div></div></div>';
+    document.getElementById('expense-tbody').innerHTML = '';
+    document.getElementById('expense-badge').textContent = 'LOADING';
+  }
+
+  let fetched = 0;
+  for (const ticker of tickers) {
+    const rowsForTicker = rows.filter(r => r.ticker === ticker);
+    const needsDivForTicker = rowsForTicker.some(r => r.divYield == null);
+    const needsERForTicker  = rowsForTicker.some(r => r.expRatio == null);
+    if (!needsDivForTicker && !needsERForTicker) continue;
+
+    const yahooData = await fetchYahooFundData(ticker);
+    rowsForTicker.forEach(r => {
+      if (r.divYield == null && yahooData.divYield != null) r.divYield = yahooData.divYield;
+      if (r.expRatio == null && yahooData.expRatio != null) r.expRatio = yahooData.expRatio;
+    });
+    fetched++;
+    await new Promise(r => setTimeout(r, 250)); // rate limit
+  }
+
+  console.log(`[LWP] Yahoo fund data: enriched ${fetched} tickers`);
+  renderIncomeExpense(rows);
+}
+
+// Separated income/expense rendering so it can be called after async Yahoo fetch
+function renderIncomeExpense(rows) {
+  const totalValue = rows.reduce((s, r) => s + r.value, 0);
+  const incomeSection = document.getElementById('income-section');
+  const expenseSection = document.getElementById('expense-section');
+  const hasDiv = rows.some(r => r.divYield != null);
+  const hasER  = rows.some(r => r.expRatio != null);
+
+  if (hasDiv) {
+    const divRows = rows.filter(r => r.divYield != null).sort((a,b) => (b.value * b.divYield/100) - (a.value * a.divYield/100));
+    const totalIncome = divRows.reduce((s,r) => s + (r.value * r.divYield / 100), 0);
+    const weightedYield = totalValue > 0 ? (totalIncome / totalValue * 100) : 0;
+    const monthlyIncome = totalIncome / 12;
+
+    document.getElementById('income-summary').innerHTML = `<div class="ie-summary">
+      <div class="ie-summary-item">
+        <div class="ie-summary-label">Est. Annual Income</div>
+        <div class="ie-summary-value" style="color:var(--green)">$${Math.round(totalIncome).toLocaleString()}</div>
+        <div class="ie-summary-sub">\u2248 $${Math.round(monthlyIncome).toLocaleString()} / month</div>
+      </div>
+      <div class="ie-summary-item">
+        <div class="ie-summary-label">Wtd. Avg Yield</div>
+        <div class="ie-summary-value" style="color:var(--green)">${weightedYield.toFixed(2)}%</div>
+        <div class="ie-summary-sub">${divRows.length} of ${rows.length} positions</div>
+      </div>
+    </div>`;
+
+    const itb = document.getElementById('income-tbody');
+    itb.innerHTML = '';
+    divRows.forEach(r => {
+      const qc = (qMeta[r.quad]||qMeta.UNKNOWN).c;
+      const estInc = r.value * r.divYield / 100;
+      itb.innerHTML += `<tr>
+        <td class="t-sym">${r.ticker}</td>
+        <td><span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px">${r.quad}</span></td>
+        <td>${r.divYield.toFixed(2)}%</td>
+        <td>$${Math.round(r.value).toLocaleString()}</td>
+        <td style="color:var(--green);font-weight:700">$${Math.round(estInc).toLocaleString()}</td>
+      </tr>`;
+    });
+    itb.innerHTML += `<tr class="ie-total-row">
+      <td colspan="3">Total Estimated Income</td>
+      <td>$${Math.round(totalValue).toLocaleString()}</td>
+      <td style="color:var(--green)">$${Math.round(totalIncome).toLocaleString()}</td>
+    </tr>`;
+    incomeSection.style.display = '';
+    document.getElementById('income-badge').textContent = `${divRows.length} POSITIONS`;
+  } else {
+    incomeSection.style.display = 'none';
+  }
+
+  if (hasER) {
+    const erRows = rows.filter(r => r.expRatio != null).sort((a,b) => b.expRatio - a.expRatio);
+    const totalCost = erRows.reduce((s,r) => s + (r.value * r.expRatio / 100), 0);
+    const weightedER = totalValue > 0 ? (totalCost / totalValue * 100) : 0;
+
+    document.getElementById('expense-summary').innerHTML = `<div class="ie-summary">
+      <div class="ie-summary-item">
+        <div class="ie-summary-label">Annual Cost</div>
+        <div class="ie-summary-value" style="color:var(--gold)">$${Math.round(totalCost).toLocaleString()}</div>
+        <div class="ie-summary-sub">on $${Math.round(totalValue).toLocaleString()}</div>
+      </div>
+      <div class="ie-summary-item">
+        <div class="ie-summary-label">Wtd. Avg Expense</div>
+        <div class="ie-summary-value" style="color:var(--gold)">${weightedER.toFixed(2)}%</div>
+        <div class="ie-summary-sub">${erRows.length} of ${rows.length} positions</div>
+      </div>
+    </div>`;
+
+    const etb = document.getElementById('expense-tbody');
+    etb.innerHTML = '';
+    erRows.forEach(r => {
+      const qc = (qMeta[r.quad]||qMeta.UNKNOWN).c;
+      const cost = r.value * r.expRatio / 100;
+      etb.innerHTML += `<tr>
+        <td class="t-sym">${r.ticker}</td>
+        <td><span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${qc};background:${qc}12;padding:2px 6px;border-radius:2px">${r.quad}</span></td>
+        <td>${r.expRatio.toFixed(2)}%</td>
+        <td>$${Math.round(r.value).toLocaleString()}</td>
+        <td style="color:var(--gold);font-weight:700">$${Math.round(cost).toLocaleString()}</td>
+      </tr>`;
+    });
+    etb.innerHTML += `<tr class="ie-total-row">
+      <td colspan="3">Total Annual Cost</td>
+      <td>$${Math.round(totalValue).toLocaleString()}</td>
+      <td style="color:var(--gold)">$${Math.round(totalCost).toLocaleString()}</td>
+    </tr>`;
+    expenseSection.style.display = '';
+    document.getElementById('expense-badge').textContent = `${erRows.length} POSITIONS`;
+  } else {
+    expenseSection.style.display = 'none';
+  }
+}
+
+// ── Main handler — parses file, renders dashboard, then enriches from Yahoo
 function handleFile(file) {
   if (!file) return;
   document.getElementById('upload-badge').textContent = file.name.length>18 ? file.name.slice(0,16)+'\u2026' : file.name;
@@ -1416,11 +1802,13 @@ function handleFile(file) {
   file.arrayBuffer().then(buf => {
     try {
       const parsed = parseFile(buf, file.name);
-      const rows = parsed.positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs }));
+      const rows = parsed.positions.map(p => ({ ticker:p.ticker, quad:p.quad, qty:p.qty, price:p.price, value:p.price*p.qty, rawQuad:p.rawQuad, rs:p.rs, divYield:p.divYield, expRatio:p.expRatio }));
       refreshDashboard(rows);
       // Parse and display portfolio performance from Performance sheet
       const perfData = parsePerformance(parsed.perfRows);
       loadPortfolioReturns(perfData);
+      // Async: fetch missing div yields & expense ratios from Yahoo Finance
+      enrichWithYahooData(rows);
     } catch(err) {
       showStatus('\u2715 ' + err.message, 'error');
       console.error(err);
