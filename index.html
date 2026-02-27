@@ -573,25 +573,11 @@ function sparkline(id, data, color) {
   });
 }
 
-// ── CORS PROXY HELPER ──
-const PROXIES = [
-  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-];
+// ── FETCH HELPER ──
 async function corsFetch(url) {
-  // Try direct first (works if served from http)
-  try {
-    const r = await fetch(url, {headers:{'User-Agent':'Mozilla/5.0'}});
-    if (r.ok) return r;
-  } catch(e) {}
-  // Try proxies
-  for (const proxy of PROXIES) {
-    try {
-      const r = await fetch(proxy(url));
-      if (r.ok) return r;
-    } catch(e) {}
-  }
-  throw new Error('All fetch attempts failed for: ' + url);
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r;
 }
 
 // ── MARKET STATUS (NYSE hours) ──
