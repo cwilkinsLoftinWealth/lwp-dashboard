@@ -658,8 +658,8 @@ function displayVIX(val, change, changePct) {
 async function fetchVIX() {
   const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?range=5d&interval=1d';
   const proxies = [
-    { url: `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`, wrapped: true },
     { url: `https://corsproxy.io/?url=${encodeURIComponent(yahooUrl)}`, wrapped: false },
+    { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yahooUrl)}`, wrapped: false },
   ];
   for (const proxy of proxies) {
     try {
@@ -747,15 +747,14 @@ function displayFG(score) {
 async function fetchFearGreed() {
   const fgUrl = 'https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2025-01-01';
   const proxies = [
-    `https://api.allorigins.win/get?url=${encodeURIComponent(fgUrl)}`,
     `https://corsproxy.io/?url=${encodeURIComponent(fgUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(fgUrl)}`,
   ];
   for (const proxyUrl of proxies) {
     try {
       const r = await fetch(proxyUrl);
       if (!r.ok) continue;
       const raw = await r.json();
-      // allorigins wraps in {contents: "..."} when using /get
       const data = raw.contents ? JSON.parse(raw.contents) : raw;
       if (data && data.fear_and_greed && data.fear_and_greed.score != null) {
         displayFG(data.fear_and_greed.score);
@@ -877,16 +876,16 @@ async function yahooCandles(symbol, range) {
   const interval = ['2y','3y','5y'].includes(range) ? '1wk' : '1d';
   const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${interval}`;
   const proxies = [
-    { url: `https://api.allorigins.win/get?url=${encodeURIComponent(yUrl)}`, wrapped: true },
-    { url: `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`, wrapped: false }
+    { url: `https://corsproxy.io/?url=${encodeURIComponent(yUrl)}`, wrapped: false },
+    { url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(yUrl)}`, wrapped: false }
   ];
   for (const proxy of proxies) {
     try {
-      console.log(`[LWP] Yahoo fallback for ${symbol} via ${proxy.wrapped ? 'allorigins' : 'corsproxy'}`);
+      console.log(`[LWP] Yahoo fallback for ${symbol} via ${proxy.url.includes('codetabs') ? 'codetabs' : 'corsproxy'}`);
       const r = await fetch(proxy.url);
       if (!r.ok) continue;
       const raw = await r.json();
-      const data = proxy.wrapped ? JSON.parse(raw.contents) : raw;
+      const data = raw.contents ? JSON.parse(raw.contents) : raw;
       const result = data.chart.result[0];
       const ts = result.timestamp;
       const closes = result.indicators.quote[0].close;
@@ -902,13 +901,17 @@ async function yahooCandles(symbol, range) {
   throw new Error('All sources failed for ' + symbol);
 }
 
-// Try Finnhub first, fall back to Yahoo
+// Try Yahoo first (more reliable for mutual funds + ETFs), Finnhub as fallback
 async function getCandles(symbol, from, to, resolution, range) {
   try {
-    return await fhCandles(symbol, from, to, resolution);
-  } catch(e) {
-    console.warn(`[LWP] Finnhub failed for ${symbol}, trying Yahoo:`, e.message);
     return await yahooCandles(symbol, range);
+  } catch(e) {
+    console.warn(`[LWP] Yahoo failed for ${symbol}, trying Finnhub:`, e.message);
+    try {
+      return await fhCandles(symbol, from, to, resolution);
+    } catch(e2) {
+      throw new Error(`No data for ${symbol} from any source`);
+    }
   }
 }
 
