@@ -546,7 +546,7 @@
         <tr><td>Barclays Agg (AGG)</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td><td class="perf-loading">…</td></tr>
       </tbody>
     </table>
-    <div class="perf-note" id="perf-note">Benchmark returns are annualized, fetched live. Upload holdings file to populate LWP Portfolio row.</div>
+    <div class="perf-note" id="perf-note">Benchmark returns based on prior trading day close. Upload holdings file to populate LWP Portfolio row.</div>
   </div>
 
   <!-- FIVE QUADRANT HERO (presentation mode only) -->
@@ -891,11 +891,9 @@ setInterval(fetchFearGreed, 300000);
 // ── PERFORMANCE & BENCHMARKS (unified panel) ──────────────────────────────
 
 // Fetch Yahoo Finance data via CORS proxy — returns { startPrice, endPrice } for a range
+// endPrice is ALWAYS the previous trading day's close (not intraday)
 async function yahooReturn(symbol, range) {
-  // Yahoo range options: 1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max
-  // For 3y: use 5y data but trim to ~3 years of candles
   const yRange = { ytd:'ytd', '1y':'1y', '2y':'2y', '3y':'5y', '5y':'5y' }[range] || '1y';
-  // Use daily interval for ytd/1y, weekly for 2y+
   const interval = ['2y','3y','5y'].includes(range) ? '1wk' : '1d';
   const yUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?range=${yRange}&interval=${interval}`;
   const proxies = [
@@ -913,31 +911,35 @@ async function yahooReturn(symbol, range) {
       const timestamps = result.timestamp || [];
       const closes = result.indicators.quote[0].close || [];
 
-      // Current price from metadata (most accurate)
-      const endPrice = meta.regularMarketPrice;
-      if (!endPrice) continue;
+      // Use previous close (last completed trading day) — NOT live intraday
+      // meta.previousClose = yesterday's close; meta.regularMarketPrice = live/current
+      // If previousClose isn't available, fall back to last candle close in the data
+      let endPrice = meta.previousClose;
+      if (!endPrice || endPrice <= 0) {
+        // Walk backwards through candles to find last valid close
+        for (let i = closes.length - 1; i >= 0; i--) {
+          if (closes[i] && closes[i] > 0) { endPrice = closes[i]; break; }
+        }
+      }
+      if (!endPrice || endPrice <= 0) continue;
 
       let startPrice;
       if (range === 'ytd') {
-        // chartPreviousClose is the last close before the range started (Dec 31 close)
         startPrice = meta.chartPreviousClose;
       } else if (range === '3y') {
-        // We fetched 5y data — find the candle closest to 3 years ago
         const threeYearsAgo = Date.now() / 1000 - (3 * 365.25 * 86400);
-        let bestIdx = 0;
-        let bestDiff = Infinity;
+        let bestIdx = 0, bestDiff = Infinity;
         for (let i = 0; i < timestamps.length; i++) {
           const diff = Math.abs(timestamps[i] - threeYearsAgo);
           if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
         }
         startPrice = closes[bestIdx];
       } else {
-        // For 1y, 2y, 5y — chartPreviousClose is the close before the range start
         startPrice = meta.chartPreviousClose;
       }
 
       if (!startPrice || startPrice <= 0) continue;
-      console.log(`[LWP] ${symbol} ${range}: start=${startPrice.toFixed(2)} end=${endPrice.toFixed(2)} return=${(((endPrice/startPrice)-1)*100).toFixed(2)}%`);
+      console.log(`[LWP] ${symbol} ${range}: start=${startPrice.toFixed(2)} end=${endPrice.toFixed(2)} (prev close) return=${(((endPrice/startPrice)-1)*100).toFixed(2)}%`);
       return { startPrice, endPrice };
     } catch(e) {
       console.warn(`[LWP] Yahoo return fetch failed for ${symbol} (${range}):`, e.message);
@@ -1047,7 +1049,7 @@ async function loadBenchmarks() {
     updatePerfRow(3, blend);
   }
 
-  document.getElementById('perf-note').textContent = 'Benchmark returns are annualized (except YTD & 1Y which are total return). Data via Yahoo Finance.';
+  document.getElementById('perf-note').textContent = 'Benchmark returns based on prior trading day close. Annualized for periods over 1 year.';
 }
 
 // Parse portfolio performance from the Performance sheet
@@ -1093,7 +1095,7 @@ function loadPortfolioReturns(perfData) {
     document.getElementById('perf-badge').textContent = 'LIVE DATA';
     const count = ['ytd','y1','y2','y3','y5'].filter(k => perfData[k] !== null).length;
     document.getElementById('perf-note').textContent =
-      `LWP Portfolio returns from uploaded file (${count}/5 periods). Benchmarks via Yahoo Finance.`;
+      `LWP Portfolio returns from uploaded file (${count}/5 periods). Benchmarks as of prior close.`;
   }
   // Set client name for presentation mode
   if (perfData.clientName) {
