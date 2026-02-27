@@ -650,33 +650,34 @@ function displayVIX(val, change, changePct) {
 }
 
 async function fetchVIX() {
-  // Finnhub indices endpoint for VIX
-  try {
-    const r = await fetch(`https://finnhub.io/api/v1/quote?symbol=VIXY&token=${FH_KEY}`);
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const d = await r.json();
-    // VIXY tracks VIX short-term futures — use as directional indicator
-    // Also try to get actual VIX from Finnhub market status
-    const r2 = await fetch(`https://finnhub.io/api/v1/quote?symbol=%5EVIX&token=${FH_KEY}`);
-    const d2 = r2.ok ? await r2.json() : null;
-    if (d2 && d2.c && d2.c > 0) {
-      displayVIX(d2.c, d2.d, d2.dp);
-    } else if (d.c && d.c > 0) {
-      displayVIX(d.c, d.d, d.dp);
-      document.getElementById('vix-regime').textContent += ' (VIXY)';
-    } else {
-      throw new Error('No VIX data');
-    }
-    return true;
-  } catch(e) {
-    console.warn('[LWP] VIX fetch failed:', e.message);
-    document.getElementById('vix-val').textContent = '—';
-    document.getElementById('vix-regime').textContent = 'Data unavailable';
-    document.getElementById('vix-badge').textContent = 'OFFLINE';
-    document.getElementById('vix-badge').className = 'badge b-muted';
-    document.getElementById('vix-change').textContent = 'Could not reach data source';
-    return false;
+  const yahooUrl = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EVIX?range=5d&interval=1d';
+  const proxies = [
+    { url: `https://api.allorigins.win/get?url=${encodeURIComponent(yahooUrl)}`, wrapped: true },
+    { url: `https://corsproxy.io/?url=${encodeURIComponent(yahooUrl)}`, wrapped: false },
+  ];
+  for (const proxy of proxies) {
+    try {
+      const r = await fetch(proxy.url);
+      if (!r.ok) continue;
+      const raw = await r.json();
+      const data = proxy.wrapped ? JSON.parse(raw.contents) : raw;
+      const result = data.chart.result[0];
+      const closes = result.indicators.quote[0].close.filter(v => v != null);
+      const current = result.meta.regularMarketPrice || closes[closes.length - 1];
+      const prev = result.meta.chartPreviousClose || (closes.length > 1 ? closes[closes.length - 2] : current);
+      const change = current - prev;
+      const changePct = prev ? (change / prev * 100) : 0;
+      displayVIX(current, change, changePct);
+      return true;
+    } catch(e) { console.warn('[LWP] VIX proxy attempt failed:', e.message); continue; }
   }
+  console.warn('[LWP] VIX all sources failed');
+  document.getElementById('vix-val').textContent = '—';
+  document.getElementById('vix-regime').textContent = 'Data unavailable';
+  document.getElementById('vix-badge').textContent = 'OFFLINE';
+  document.getElementById('vix-badge').className = 'badge b-muted';
+  document.getElementById('vix-change').textContent = 'Could not reach data source';
+  return false;
 }
 fetchVIX();
 setInterval(fetchVIX, 120000);
