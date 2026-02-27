@@ -575,9 +575,23 @@ function sparkline(id, data, color) {
 
 // ── FETCH HELPER ──
 async function corsFetch(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  return r;
+  // Try direct first
+  try {
+    const r = await fetch(url);
+    if (r.ok) return r;
+  } catch(e) {}
+  // Yahoo Finance blocks browser requests — use proxy fallbacks
+  const proxies = [
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+  ];
+  for (const proxyUrl of proxies) {
+    try {
+      const r = await fetch(proxyUrl);
+      if (r.ok) return r;
+    } catch(e) {}
+  }
+  throw new Error('All fetch attempts failed');
 }
 
 // ── MARKET STATUS (NYSE hours) ──
